@@ -48,9 +48,6 @@ class CoverGenerator(object):
 			frame.paste(thumb, box)
 		self.image = frame
 
-	def generate_markup(self, title, filename, search_url):
-		return "<markup></markup>"
-
 	def write_cover(self):
 		self.image.save(self.output_filename, "PNG")
 
