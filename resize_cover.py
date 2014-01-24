@@ -1,12 +1,15 @@
-from os.path import basename
+import sys
+from PIL import Image, ImageColor
+from os.path import basename, splitext
 
 __author__ = 'dan.leehr@nescent.org'
 
-import sys, os
-from PIL import Image, ImageColor
 
 FRONT_COVER_DIMS = (100, 130)
-PKG_COVER_DIMS = (90, 120)
+PKG_COVER_DIMS = (160, 200)
+
+FRONT_OUTPUT_DIR = "/Users/dan/Code/dryad-repo/dspace/modules/xmlui/src/main/webapp/themes/Mirage/images/"
+PKG_OUTPUT_DIR = "/Users/dan/Code/dryad-repo/dspace/modules/xmlui/src/main/webapp/themes/Dryad/images/coverimages/"
 
 class CoverGenerator(object):
 	def __init__(self, filename):
@@ -66,7 +69,7 @@ if __name__ == '__main__':
 	generator = CoverGenerator(filename)
 	if len(sys.argv) > 2:
 		generator.bgcolor = sys.argv[2]
-	generator.write_front_cover(basename(filename) + "-front.png")
-	generator.write_pkg_cover(basename(filename) + "-pkg.png")
-
+	base = splitext(basename(filename))[0]
+	generator.write_front_cover(FRONT_OUTPUT_DIR + "recentlyIntegrated-" + base + ".png")
+	generator.write_pkg_cover(PKG_OUTPUT_DIR + base + ".png")
 
