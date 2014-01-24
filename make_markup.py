@@ -6,7 +6,7 @@ journal_name = ""
 journal_url = ""
 cover_image = ""
 
-def render(journal_name, journal_url, cover_image):
+def render_itemsummary(journal_name, journal_url, cover_image):
     markup = "\
                     <xsl:when test='$journal-name = \"" + journal_name + "\"'>\n\
                         <a target=\"_blank\">\n\
@@ -39,5 +39,18 @@ gms_journals = (
 
 )
 
+def render_recentlyintegrated(journal_name, cover_image):
+    escaped = journal_name.replace(' ', '%5C+')
+    lowercased= journal_name.lower().replace(' ', '%5C+')
+    separator = "%5C%7C%5C%7C%5C%7C"
+    markup = "\
+        <!-- " + journal_name + " --> \n\
+		  <a class=\"single-image-link\" href=\"/discover?field=prism.publicationName_filter&amp;query=&amp;fq=prism.publicationName_filter%3A" + lowercased + separator + journal_name + "\">\
+    <img class=\"pub-cover\" src=\"/themes/Mirage/images/recentlyIntegrated-" + cover_image + "\" alt=\"" + journal_name + "\" /></a>"
+    return markup
+
 for journal in gms_journals:
-    print render(journal[0], journal[1], journal[2])
+    print render_itemsummary(journal[0], journal[1], journal[2])
+
+for journal in gms_journals:
+    print render_recentlyintegrated(journal[0],journal[2])
