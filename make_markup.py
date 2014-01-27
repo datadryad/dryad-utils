@@ -36,7 +36,11 @@ gms_journals = (
     ("GMS Onkologische Rehabilitation und Sozialmedizin","http://www.egms.de/dynamic/en/journals/ors/index.htm", "logo_dgho.png"),
     ("GMS Zeitschrift für Medizinische Ausbildung","http://www.egms.de/dynamic/en/journals/zma/index.htm", "logo_gma_klein.png"),
     ("GMS Zeitschrift zur Förderung der Qualitätssicherung in medizinischen Laboratorien", "http://www.egms.de/dynamic/en/journals/lab/", "logo_lab.png")
+)
 
+jan27_journals = (
+    ("Journal of Hymenoptera Research","http://www.pensoft.net/journals/jhr/","JHymenopRes.png"),
+    ("Subterranean Biology","http://www.pensoft.net/journals/subtbiol/","SubterraneanBiol.png"),
 )
 
 def render_recentlyintegrated(journal_name, cover_image):
@@ -49,8 +53,8 @@ def render_recentlyintegrated(journal_name, cover_image):
     <img class=\"pub-cover\" src=\"/themes/Mirage/images/recentlyIntegrated-" + cover_image + "\" alt=\"" + journal_name + "\" /></a>"
     return markup
 
-for journal in gms_journals:
+for journal in jan27_journals:
     print render_itemsummary(journal[0], journal[1], journal[2])
 
-for journal in gms_journals:
-    print render_recentlyintegrated(journal[0],journal[2])
+# for journal in gms_journals:
+#     print render_recentlyintegrated(journal[0],journal[2])
