@@ -2,10 +2,6 @@ __author__ = 'dan'
 # coding=UTF-8
 
 
-journal_name = ""
-journal_url = ""
-cover_image = ""
-
 def render_itemsummary(journal_name, journal_url, cover_image):
     markup = "\
                     <xsl:when test='$journal-name = \"" + journal_name + "\"'>\n\
@@ -43,6 +39,10 @@ jan27_journals = (
     ("Subterranean Biology","http://www.pensoft.net/journals/subtbiol/","SubterraneanBiol.png"),
 )
 
+feb20_journals = (
+    ("Deutsche Entomologische Zeitschrift","http://www.pensoft.net/journals/dez/", "DEZ.png"),
+)
+
 def render_recentlyintegrated(journal_name, cover_image):
     escaped = journal_name.replace(' ', '%5C+')
     lowercased= journal_name.lower().replace(' ', '%5C+')
@@ -53,8 +53,6 @@ def render_recentlyintegrated(journal_name, cover_image):
     <img class=\"pub-cover\" src=\"/themes/Mirage/images/recentlyIntegrated-" + cover_image + "\" alt=\"" + journal_name + "\" /></a>"
     return markup
 
-for journal in jan27_journals:
+for journal in feb20_journals:
     print render_itemsummary(journal[0], journal[1], journal[2])
-
-# for journal in gms_journals:
-#     print render_recentlyintegrated(journal[0],journal[2])
+    print render_recentlyintegrated(journal[0], journal[2])
