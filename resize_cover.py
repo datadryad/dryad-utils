@@ -15,6 +15,7 @@ class CoverGenerator(object):
     def __init__(self, filename):
         self.filename = filename
         self.image = None
+        self.resized = None
         self.dims = None
         self.output_filename = None
         self.bgcolor = "rgba(255,255,255,255)"
@@ -55,10 +56,10 @@ class CoverGenerator(object):
             frame.paste(resized, box, resized)
         else:
             frame.paste(resized, box)
-        self.image = frame
+        self.resized = frame
 
     def write_cover(self):
-        self.image.save(self.output_filename, "PNG")
+        self.resized.save(self.output_filename, "PNG")
 
     def write_front_cover(self, output_filename):
         self.generate_front_cover()

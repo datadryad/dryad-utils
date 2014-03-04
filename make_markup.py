@@ -43,6 +43,12 @@ feb20_journals = (
     ("Deutsche Entomologische Zeitschrift","http://www.pensoft.net/journals/dez/", "DEZ.png"),
 )
 
+bmc_journals = (
+    ("BMC Ecology", "http://www.biomedcentral.com/bmcecol", "BMCEcology.png"),
+    ("BMC Evolutionary Biology", "http://www.biomedcentral.com/bmcevolbiol", "BMCEvolBiology.png"),
+
+)
+
 def render_recentlyintegrated(journal_name, cover_image):
     escaped = journal_name.replace(' ', '%5C+')
     lowercased= journal_name.lower().replace(' ', '%5C+')
@@ -53,6 +59,5 @@ def render_recentlyintegrated(journal_name, cover_image):
     <img class=\"pub-cover\" src=\"/themes/Mirage/images/recentlyIntegrated-" + cover_image + "\" alt=\"" + journal_name + "\" /></a>"
     return markup
 
-for journal in feb20_journals:
+for journal in bmc_journals:
     print render_itemsummary(journal[0], journal[1], journal[2])
-    print render_recentlyintegrated(journal[0], journal[2])
