@@ -1,16 +1,52 @@
 from requests.api import request
-from item_ids import EMBARGO_1YR, EMBARGO_UAP, EMBARGO_WITH_AVAILABLE, IDS_TO_DOIS
-from item_ids import EPERSON_DRYADSTAFF
+from item_ids import *
+from read_httplogs import read_logs
 import requests
 from xml.etree import ElementTree
 from dateutil import parser, tz
 import unicodecsv
 
 BASE_SOLR_URL = "http://datadryad.org/solr/statistics/select/"
-
+LOGS_FILENAME = '/Users/dan/temp/dryad-http-logs/bitstreams-datadryad-20130728-20131222'
 class dummy():
     def isoformat(self):
         return ''
+
+def merge_apache_data(output_list):
+    apache_logs_dict = read_logs(LOGS_FILENAME)
+    all_apache_handles = apache_logs_dict.keys()
+    merged_data = list()
+    for row in output_list:
+        row_handle = row['handle']
+        parsed_download_date = row['parsed_download_date_raw']
+        unix_time = int(parsed_download_date.strftime('%s'))
+        if row_handle in all_apache_handles:
+            handle_request_times = apache_logs_dict[row_handle].keys()
+            if unix_time in handle_request_times:
+                # The solr request time for this handle is in the apache dict, use it directly
+                request_time = unix_time
+            else:
+                # The solr request time is not in the apache dict, find the previous time
+                try:
+                    request_time = [x for x in handle_request_times if x < unix_time][-1]
+                except IndexError:
+                    print "unable to find a time for %s prior to %d" % (row_handle, unix_time)
+                    request_time = None
+            if request_time:
+                requests_list = apache_logs_dict[row_handle][request_time]
+                if len(requests_list) > 1:
+                    print "More than one request for %s at %d", (row_handle, request_time)
+                    merged_data.append(row)
+                else:
+                    request_dict = requests_list[0]
+                    merged_row = dict(row.items() + request_dict.items())
+                    merged_data.append(merged_row)
+            else:
+                merged_data.append(row)
+        else:
+            print "handle %s not found in apache logs" % row_handle
+            merged_data.append(row) # bad
+    return merged_data
 
 def add_items(item_list, items):
     for item in item_list:
@@ -59,26 +95,35 @@ def main():
             else:
                 doc_dict['dryad_staff_activity'] = None
             doc_dict['parsed_download_date'] = parsed_download.isoformat()
+            doc_dict['parsed_download_date_raw'] = parsed_download
             doc_dict['parsed_embargo_date'] = parsed_embargo.isoformat()
             doc_dict['embargo_type'] = embargo_type
             if allowed_download_date:
                 doc_dict['downloaded_early'] = parsed_download < parsed_embargo
             inject_dois(item_id, doc_dict)
+            inject_handles(item_id, doc_dict)
             output_list.append(doc_dict)
+    apache_data = merge_apache_data(output_list)
     with open('embargo_report.csv', 'wb') as f:
         allcolumns = []
-        for row in output_list:
+        for row in apache_data:
             allcolumns = allcolumns + row.keys()
         allcolumns = list(set(allcolumns)) # uniquify
         writer = unicodecsv.DictWriter(f,allcolumns)
         writer.writeheader()
-        writer.writerows(output_list)
+        writer.writerows(apache_data)
 
 def inject_dois(item_id, doc_dict):
     for doiline in IDS_TO_DOIS:
         if item_id == doiline[0]:
             doc_dict['file_doi'] = doiline[1]
             doc_dict['package_doi'] = doiline[2]
+
+def inject_handles(item_id, doc_dict):
+    for handle_line in IDS_TO_HANDLES:
+        if item_id == handle_line[0]:
+            doc_dict['handle'] = handle_line[1]
+
 
 def check_eperson(doc_dict):
     '''
