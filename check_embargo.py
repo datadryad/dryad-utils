@@ -26,11 +26,11 @@ def merge_apache_data(output_list):
                 # The solr request time for this handle is in the apache dict, use it directly
                 request_time = unix_time
             else:
-                # The solr request time is not in the apache dict, find the previous time
+                # The solr request time is not in the apache dict, find a time within 10 seconds
                 try:
-                    request_time = [x for x in handle_request_times if x < unix_time][-1]
+                    request_time = [x for x in handle_request_times if abs(x - unix_time) < 10][-1]
                 except IndexError:
-                    print "unable to find a time for %s prior to %d" % (row_handle, unix_time)
+                    print "unable to find a time for %s within 10 seconds of %d" % (row_handle, unix_time)
                     request_time = None
             if request_time:
                 requests_list = apache_logs_dict[row_handle][request_time]
@@ -40,6 +40,7 @@ def merge_apache_data(output_list):
                 else:
                     request_dict = requests_list[0]
                     merged_row = dict(row.items() + request_dict.items())
+                    # Update the downloaded early
                     merged_data.append(merged_row)
             else:
                 merged_data.append(row)
