@@ -1,3 +1,18 @@
+# -*- coding: utf-8 -*-
+
+"""
+resize_cover.py
+~~~~~~~~~~~~
+
+Creates PNG images at 100x130 and a 160x200 of a journal cover image file passed as the first argument.
+ The generated images maintain the original aspect ratio, and use a white background by default.  To use
+ a different background color, specify it as the second argument.
+
+ Requires pillow (up-to-date version of PIL)
+
+The files are placed into the appropriate subdirectories of dryad-repo, so change DRYAD_REPO_ROOT if you're not me.
+
+"""
 import sys
 from PIL import Image, ImageColor
 from os.path import basename, splitext
@@ -8,8 +23,10 @@ __author__ = 'dan.leehr@nescent.org'
 FRONT_COVER_DIMS = (100, 130)
 PKG_COVER_DIMS = (160, 200)
 
-FRONT_OUTPUT_DIR = "/Users/dan/Code/dryad-repo/dspace/modules/xmlui/src/main/webapp/themes/Mirage/images/"
-PKG_OUTPUT_DIR = "/Users/dan/Code/dryad-repo/dspace/modules/xmlui/src/main/webapp/themes/Dryad/images/coverimages/"
+DRYAD_REPO_ROOT =  "/Users/dan/Code/dryad-repo"
+
+FRONT_OUTPUT_DIR = DRYAD_REPO_ROOT + "/dspace/modules/xmlui/src/main/webapp/themes/Mirage/images/"
+PKG_OUTPUT_DIR = DRYAD_REPO_ROOT + "/dspace/modules/xmlui/src/main/webapp/themes/Dryad/images/coverimages/"
 
 class CoverGenerator(object):
     def __init__(self, filename):
@@ -26,8 +43,8 @@ class CoverGenerator(object):
         return
 
     def generate_front_cover(self):
-        self.read_image()
         """ Generate a cover image sized for the dryad homepage """
+        self.read_image()
         self.dims = FRONT_COVER_DIMS
         return self.generate_cover()
 

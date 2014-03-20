@@ -1,6 +1,14 @@
-__author__ = 'dan'
-# coding=UTF-8
+# -*- coding: utf-8 -*-
 
+"""
+make_markup.py
+~~~~~~~~~~~~
+
+Creates markup needed when adding journals to recently integrated rotation or to the DryadItemSummary.
+ Edit the tuples and call render_itemsummary or render_recentlyintegrated to print markup to stdout
+
+"""
+__author__ = 'dan'
 
 def render_itemsummary(journal_name, journal_url, cover_image):
     markup = "\
