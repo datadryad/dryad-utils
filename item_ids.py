@@ -1,5 +1,12 @@
+# -*- coding: utf-8 -*-
 
-'''
+"""
+item_ids.py
+~~~~~~~~~~~~
+
+item ids and related metadata, extracted from postgres queries for items with dc.date.issued around 2013-12-12
+
+Postgres query:
 select md_issued.item_id, md_embargotype.text_value, md_embargoeduntil.text_value from
     metadatavalue as md_issued
     LEFT JOIN metadatavalue as md_embargotype using (item_id)
@@ -11,7 +18,7 @@ and
 and
     md_issued.metadata_field_id = 15 and md_issued.text_value in ('2013-12-11','2013-12-12','2013-12-13' )
 ;
-'''
+"""
 # item_id, embargo_type, embargoUntilDate
 EMBARGO_1YR = [
   (72142,'oneyear','2014-12-20'),

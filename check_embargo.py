@@ -1,3 +1,14 @@
+# -*- coding: utf-8 -*-
+
+"""
+check_embargo.py
+~~~~~~~~~~~~
+
+Creates a report of items downloaded under embargo, targeting logs from Aug-Dec 2013 and
+ files installed into Dryad around 2013-12-12.  Queries solr statistics and requires apache
+ logs on the local filesystem
+
+"""
 from requests.api import request
 from item_ids import *
 from read_httplogs import read_logs
