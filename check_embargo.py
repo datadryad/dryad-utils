@@ -146,11 +146,6 @@ def check_eperson(doc_dict):
     else:
         return False
 
-def lookup_access(xmldoc):
-    ''' this needs to get IP addresses from apache logfiles
-    '''
-    pass
-
 def extract_downloads(xmldoc):
     extracted = dict()
     for child in xmldoc:
