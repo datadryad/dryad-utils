@@ -27,12 +27,16 @@
 #
 # It will try to resolve the DOI using dx.doi.org. If resolution fails,
 # it will interpret it as a Dryad file DOI, will strip a trailing slash
-# followed by at one or more digits, and interpret the rsult as a Dryad
+# followed by one or more digits, and interpret the result as a Dryad
 # package DOI that is expected to resolve.
 #
 # DOIs that fail to resolve as files, but for which the package resolves,
 # are reported as "fails". If the package fails too, that fact is reported
 # alongside.
+#
+# Prints results to stdout in tab-delimited format, one line per DOI. First
+# column is file DOI, second is status ("resolves", "fails", or "fails and
+# package fails".
 
 while read doi ; do
     pkgdoi=`echo "$doi" | sed -e 's/\/[0-9][.0-9]*$//'`
