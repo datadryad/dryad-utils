@@ -6,7 +6,7 @@ from item_ids import IDS_TO_HANDLES
 # LogFormat "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\" %D \"%{Age}o\" \"%{GEOIP_COUNTRY_NAME}n_%{GEOIP_REGION}n_%{GEOIP_CITY}n\"" combined
 
 REGEX = '([(\d\.)]+) - - \[(.*?)\] "(.*?)" (\d+) (\d+|\-) "(.*?)" "(.*?)" (\d+) "(.*?)" "(.*?)"'
-LINE_REGEX = '([A-Z]*) (.*) (HTTP.*)'
+LINE_REGEX = '([A-Z]*) (.*)( HTTP.*)?'
 FILENAME_REGEX = '/bitstream\handle/10255/([.^/]*)/([.^/].*)?sequence=(.*)'
 
 def read_logs(filename):
