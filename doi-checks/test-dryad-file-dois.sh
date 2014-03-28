@@ -36,7 +36,7 @@
 #
 # Prints results to stdout in tab-delimited format, one line per DOI. First
 # column is file DOI, second is status ("resolves", "fails", or "fails and
-# package fails".
+# package fails").
 
 while read doi ; do
     pkgdoi=`echo "$doi" | sed -e 's/\/[0-9][.0-9]*$//'`
