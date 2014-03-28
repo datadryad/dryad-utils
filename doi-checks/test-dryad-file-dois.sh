@@ -38,13 +38,13 @@ while read doi ; do
     pkgdoi=`echo "$doi" | sed -e 's/\/[0-9][0-9]*$//'`
     resp=`curl -L -H "Accept: text/x-bibliography" -s -w "%{http_code}" -o /dev/null http://dx.doi.org/"$doi"`
     if [ "$resp" -lt 400 ] ; then
-        echo "$doi\tresolves"
+        echo -e "$doi\tresolves"
     else 
         resp=`curl -L -H "Accept: text/x-bibliography" -s -w "%{http_code}" -o /dev/null http://dx.doi.org/"$pkgdoi"`
         if [ "$resp" -lt 400 ] ; then
-            echo "$doi\tfails"
+            echo -e "$doi\tfails"
         else
-            echo "$doi\tfails and package fails"
+            echo -e "$doi\tfails and package fails"
         fi
     fi
 done
