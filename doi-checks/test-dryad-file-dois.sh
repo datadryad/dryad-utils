@@ -35,7 +35,7 @@
 # alongside.
 
 while read doi ; do
-    pkgdoi=`echo "$doi" | sed -e 's/\/[0-9][0-9]*$//'`
+    pkgdoi=`echo "$doi" | sed -e 's/\/[0-9][.0-9]*$//'`
     resp=`curl -L -H "Accept: text/x-bibliography" -s -w "%{http_code}" -o /dev/null http://dx.doi.org/"$doi"`
     if [ "$resp" -lt 400 ] ; then
         echo -e "$doi\tresolves"
