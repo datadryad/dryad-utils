@@ -20,4 +20,7 @@ def request_urls(base_url, relative_urls):
 if __name__ == '__main__':
     filename = sys.argv[1]
     paths = extract_get_paths(filename)
+    if len(paths) == 0:
+        with open(filename, 'r') as f:
+            paths = f.readlines()
     request_urls(BASE_URL, paths)
