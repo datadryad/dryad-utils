@@ -54,7 +54,11 @@ feb20_journals = (
 bmc_journals = (
     ("BMC Ecology", "http://www.biomedcentral.com/bmcecol", "BMCEcology.png"),
     ("BMC Evolutionary Biology", "http://www.biomedcentral.com/bmcevolbiol", "BMCEvolBiology.png"),
+)
 
+apr2_journals = (
+    ("Proceedings of the Royal Society B: Biological Sciences","http://rspb.royalsocietypublishing.org","ProceedingsB.png"),
+    ("Scientific Data","http://www.nature.com/scientificdata/","ScientificData.png"),
 )
 
 def render_recentlyintegrated(journal_name, cover_image):
@@ -67,5 +71,11 @@ def render_recentlyintegrated(journal_name, cover_image):
     <img class=\"pub-cover\" src=\"/themes/Mirage/images/recentlyIntegrated-" + cover_image + "\" alt=\"" + journal_name + "\" /></a>"
     return markup
 
-for journal in bmc_journals:
+for journal in apr2_journals:
     print render_itemsummary(journal[0], journal[1], journal[2])
+
+for journal in apr2_journals:
+    print render_recentlyintegrated(journal[0],journal[2])
+
+for journal in bmc_journals:
+    print render_recentlyintegrated(journal[0],journal[2])
