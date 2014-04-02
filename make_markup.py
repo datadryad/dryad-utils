@@ -57,7 +57,7 @@ bmc_journals = (
 )
 
 apr2_journals = (
-    ("Proceedings of the Royal Society B: Biological Sciences","http://rspb.royalsocietypublishing.org","ProceedingsB.png"),
+    ("Proceedings of the Royal Society B","http://rspb.royalsocietypublishing.org","ProceedingsB.png"),
     ("Scientific Data","http://www.nature.com/scientificdata/","ScientificData.png"),
 )
 
