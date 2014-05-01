@@ -93,9 +93,8 @@ def place_largefile(bitstream_id, largefile):
     destination_path = get_assetstore_path(bitstream_id)
     if not os.access(destination_path, os.W_OK):
         raise Exception("Unable to get write access on the destination path")
-    # os.rename(largefile.path, destination_path)
-    # TODO: Actually rename the file
-    print "Rename %s -> %s" % (largefile.path, destination_path)
+    print "Renaming '%s' -> '%s'" % (largefile.path, destination_path)
+    os.rename(largefile.path, destination_path)
 
 def dict_from_query(sql):
     # Now execute it
@@ -131,8 +130,9 @@ def update_bitstream_table(bitstream_id, large_file):
         format_id,
         bitstream_id
     )
-    # TODO: More than just print the SQL
-    print sql
+    print "Executing SQL: %s" % sql
+    cmd = "psql -U dryad_app dryad_repo -c \"%s\"" % sql
+    print os.popen(cmd).read()
 
 
 def main():
