@@ -61,6 +61,12 @@ apr2_journals = (
     ("Scientific Data","http://www.nature.com/scientificdata/","ScientificData.png"),
 )
 
+elsevier_covers = (
+    ("Basic and Applied Ecology","http://www.elsevier.com/locate/baae","baae.jpg"),
+    ("Perspectives in Plant Ecology, Evolution and Systematics","http://www.elsevier.com/locate/ppees","ppees.jpg"),
+    ("Flora - Morphology, Distribution, Functional Ecology of Plants","http://www.elsevier.com/locate/flora","flora.jpg"),
+)
+
 def render_recentlyintegrated(journal_name, cover_image):
     escaped = journal_name.replace(' ', '%5C+')
     lowercased= journal_name.lower().replace(' ', '%5C+')
@@ -71,11 +77,5 @@ def render_recentlyintegrated(journal_name, cover_image):
     <img class=\"pub-cover\" src=\"/themes/Mirage/images/recentlyIntegrated-" + cover_image + "\" alt=\"" + journal_name + "\" /></a>"
     return markup
 
-for journal in apr2_journals:
+for journal in elsevier_covers:
     print render_itemsummary(journal[0], journal[1], journal[2])
-
-for journal in apr2_journals:
-    print render_recentlyintegrated(journal[0],journal[2])
-
-for journal in bmc_journals:
-    print render_recentlyintegrated(journal[0],journal[2])
