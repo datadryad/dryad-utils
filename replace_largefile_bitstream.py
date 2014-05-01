@@ -95,8 +95,8 @@ def place_largefile(bitstream_id, largefile):
     destination_path = get_assetstore_path(bitstream_id)
     if not os.access(destination_path, os.W_OK):
         raise Exception("Unable to get write access on the destination path")
-    print "Moving '%s' -> '%s'" % (largefile.path, destination_path)
-    shutil.move(largefile.path, destination_path)
+    print "Copying '%s' -> '%s'" % (largefile.path, destination_path)
+    shutil.copy(largefile.path, destination_path)
 
 def dict_from_query(sql):
     # Now execute it
