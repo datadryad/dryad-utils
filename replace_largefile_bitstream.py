@@ -48,7 +48,8 @@ class bitstream_file(object):
             return m.hexdigest()
     def check_mimetype(self):
         # If the mime type is none, prompt for it
-        print "Unable to guess MIME type"
+        if self.mimetype is None:
+            print "Unable to guess MIME type"
         while self.mimetype is None:
             raw = raw_input("Please enter a MIME type or leave blank for 'application/octet-stream': ")
             if len(raw) == 0:
