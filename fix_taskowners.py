@@ -67,13 +67,19 @@ def insert_tasklistitem_row(conn, eperson_id, tasklistitem):
   workflow_item_id = tasklistitem['workflow_item_id']
   row = generate_tasklistitem_row(eperson_id, step, action, workflow_item_id)
   print row
-  conn.execute(row)
+#  conn.execute(row)
   
 def delete_eperson_from_tasklistitem(conn, eperson_id):
   query = 'delete from tasklistitem where eperson_id = %d' % (eperson_id,)
   print query
 
+def generate_tasklistitem_prototype(workflow_item_id):
+  return {'step_id' : 'dryadAcceptEditReject', 'action_id' : 'dryadAcceptEditRejectAction', 'workflow_item_id' : workflow_item_id}
+
 def fix_taskowners(doi):
+  if doi is None:
+    raise 'Must provide a DOI'
+    return
   engine = get_engine()
   with engine.connect() as conn:
     curator_group_id = get_curator_group(conn)
@@ -100,9 +106,11 @@ def fix_taskowners(doi):
         else:
           # the person referenced by this tasklistitem is not currently a curator
           epersons_to_remove.append(eperson_id)
-      if tasklistitem_prototype is not None:
-        for eperson_id in set(epersons_to_add):
-          insert_tasklistitem_row(conn, eperson_id, tasklistitem_prototype)
+      if tasklistitem_prototype is None:
+        print 'no tasklistitems for doi %s, generating prototype' % (doi)
+        tasklistitem_prototype = generate_tasklistitem_prototype(workflow_item_id)
+      for eperson_id in set(epersons_to_add):
+        insert_tasklistitem_row(conn, eperson_id, tasklistitem_prototype)
     epersons_to_remove = set(epersons_to_remove)
     for eperson_id in epersons_to_remove:
       delete_eperson_from_tasklistitem(conn, eperson_id)
