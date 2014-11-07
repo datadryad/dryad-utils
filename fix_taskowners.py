@@ -19,7 +19,13 @@ def get_curator_group(conn):
   for result in results:
     return result['eperson_group_id']
 
-def get_curator_ids(conn, group_id):
+def get_admin_group(conn):
+  query = 'select eperson_group_id from epersongroup where name = \'Administrator\''
+  results = conn.execute(query)
+  for result in results:
+    return result['eperson_group_id']
+
+def get_members(conn, group_id):
   query = 'select eperson_id from epersongroup2eperson where eperson_group_id = %d' % group_id
   results = conn.execute(query)
   return (result['eperson_id'] for result in results)
@@ -71,7 +77,7 @@ def fix_taskowners(doi):
   engine = get_engine()
   with engine.connect() as conn:
     curator_group_id = get_curator_group(conn)
-    curator_ids = list(get_curator_ids(conn, curator_group_id))
+    curator_ids = list(get_members(conn, curator_group_id))
     if doi is None:
       workflow_item_ids = list(get_distinct_workflow_item_ids(conn))
     else:
@@ -80,6 +86,7 @@ def fix_taskowners(doi):
     # all tasklistitem rows
     epersons_to_remove = list() 
     for workflow_item_id in workflow_item_ids:
+      print workflow_item_id
       tasklistitems = get_tasklistitem_rows(conn, workflow_item_id)
       tasklistitem_prototype = None
       epersons_to_add = copy.copy(curator_ids)
@@ -94,8 +101,9 @@ def fix_taskowners(doi):
           # the person referenced by this tasklistitem is not currently a curator
           epersons_to_remove.append(eperson_id)
       if tasklistitem_prototype is not None:
-        for eperson_id in epersons_to_add:
+        for eperson_id in set(epersons_to_add):
           insert_tasklistitem_row(conn, eperson_id, tasklistitem_prototype)
+    epersons_to_remove = set(epersons_to_remove)
     for eperson_id in epersons_to_remove:
       delete_eperson_from_tasklistitem(conn, eperson_id)
 
