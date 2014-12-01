@@ -14,8 +14,13 @@ The files are placed into the appropriate subdirectories of dryad-repo, so chang
 
 """
 import sys
-from PIL import Image, ImageColor
-from os.path import basename, splitext
+try:
+    from PIL import Image, ImageColor
+except ImportError as e:
+    sys.stderr.write('\nERROR: Pillow Not found. See http://pillow.readthedocs.org/en/latest/index.html for installation instructions\n\n')
+    sys.exit(1)
+from os.path import basename, splitext, normpath, expanduser
+import argparse
 
 __author__ = 'dan.leehr@nescent.org'
 
@@ -25,17 +30,22 @@ PKG_COVER_DIMS = (160, 200)
 
 DRYAD_REPO_ROOT =  "/Users/dan/Code/dryad-repo"
 
-FRONT_OUTPUT_DIR = DRYAD_REPO_ROOT + "/dspace/modules/xmlui/src/main/webapp/themes/Mirage/images/"
-PKG_OUTPUT_DIR = DRYAD_REPO_ROOT + "/dspace/modules/xmlui/src/main/webapp/themes/Dryad/images/coverimages/"
-
 class CoverGenerator(object):
-    def __init__(self, filename):
+    def __init__(self, repo_root, filename):
+        self.repo_root = repo_root
         self.filename = filename
+        self.base = splitext(basename(filename))[0]
         self.image = None
         self.resized = None
         self.dims = None
         self.output_filename = None
         self.bgcolor = "rgba(255,255,255,255)"
+
+    def front_output_dir(self):
+        return normpath(self.repo_root + "/dspace/modules/xmlui/src/main/webapp/themes/Mirage/images/")
+
+    def pkg_output_dir(self):
+        return normpath(self.repo_root + "/dspace/modules/xmlui/src/main/webapp/themes/Dryad/images/coverimages/")
 
     def read_image(self):
         if self.image is None:
@@ -78,22 +88,41 @@ class CoverGenerator(object):
     def write_cover(self):
         self.resized.save(self.output_filename, "PNG")
 
-    def write_front_cover(self, output_filename):
+    def write_front_cover(self):
         self.generate_front_cover()
-        self.output_filename = output_filename
+        self.output_filename = self.front_output_dir() + "recentlyIntegrated-" + self.base + ".png"
         self.write_cover()
 
-    def write_pkg_cover(self, output_filename):
+    def write_pkg_cover(self):
         self.generate_pkg_cover()
-        self.output_filename = output_filename
+        self.output_filename = self.pkg_output_dir() + self.base + ".png"
         self.write_cover()
+
+class DefaultHelpParser(argparse.ArgumentParser):
+    def error(self, message):
+        sys.stderr.write('error: %s\n' % message)
+        self.print_help()
+        sys.exit(2)
+
+def generate_covers(repo_root, filename, color=None):
+    generator = CoverGenerator(expanduser(repo_root), expanduser(filename))
+    if color is not None:
+        generator.bgcolor = color
+    generator.write_front_cover()
+    generator.write_pkg_cover()
+
+def main():
+    parser = DefaultHelpParser(
+        description='Resize journal cover images and place in your local Dryad codebase',
+        epilog='Images can be in any format supported by pillow (JPEG/PNG/GIF/etc). Images will be sized to fit 100x130 and 160x200 and placed into the appropriate subdirectories within a Dryad git working copy.\nImage aspect ratios will be preserved, and borders will be filled with white (unless other color is specified)',
+        add_help=True,
+        formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument('repo_root', metavar='/path/to/dryad-repo', type=str)
+    parser.add_argument('filename', metavar='image-filename.png', type=str)
+    parser.add_argument('--color', '-c',  metavar='"rgba(\'255,255,255,255)\'',type=str)
+    args = vars(parser.parse_args())
+    generate_covers(args['repo_root'], args['filename'], args['color'])
+    print args
 
 if __name__ == '__main__':
-    filename = sys.argv[1]
-    generator = CoverGenerator(filename)
-    if len(sys.argv) > 2:
-        generator.bgcolor = sys.argv[2]
-    base = splitext(basename(filename))[0]
-    generator.write_front_cover(FRONT_OUTPUT_DIR + "recentlyIntegrated-" + base + ".png")
-    generator.write_pkg_cover(PKG_OUTPUT_DIR + base + ".png")
-
+    main()
