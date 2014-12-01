@@ -17,24 +17,24 @@ import sys
 
 def render_itemsummary(journal_name, journal_url, cover_image):
     markup = "\
-                <xsl:when test='$journal-name = \"" + journal_name + "\"'>\n\
-                    <a target=\"_blank\">\n\
-                        <xsl:attribute name=\"href\">\n\
-                            <xsl:choose>\n\
-                                <xsl:when test=\"contains($article-doi,'doi:')\">\n\
-                                    <xsl:value-of\n\
-                                            select=\"concat('http://dx.doi.org/', substring-after($article-doi, 'doi:'))\"/>\n\
-                                </xsl:when>\n\
-                                <xsl:otherwise>\n\
-                                    <xsl:value-of\n\
-                                            select=\"string('" + journal_url + "')\"/>\n\
-                                </xsl:otherwise>\n\
-                            </xsl:choose>\n\
-                        </xsl:attribute>\n\
-                        <img class=\"pub-cover\" id=\"journal-logo\" src=\"/themes/Dryad/images/coverimages/" + cover_image + "\"\n\
-                             alt=\"" + journal_name +" cover\"/>\n\
-                    </a>\n\
-                </xsl:when>"
+        <xsl:when test='$journal-name = \"" + journal_name + "\"'>\n\
+            <a target=\"_blank\">\n\
+                <xsl:attribute name=\"href\">\n\
+                    <xsl:choose>\n\
+                        <xsl:when test=\"contains($article-doi,'doi:')\">\n\
+                            <xsl:value-of\n\
+                                    select=\"concat('http://dx.doi.org/', substring-after($article-doi, 'doi:'))\"/>\n\
+                        </xsl:when>\n\
+                        <xsl:otherwise>\n\
+                            <xsl:value-of\n\
+                                    select=\"string('" + journal_url + "')\"/>\n\
+                        </xsl:otherwise>\n\
+                    </xsl:choose>\n\
+                </xsl:attribute>\n\
+                <img class=\"pub-cover\" id=\"journal-logo\" src=\"/themes/Dryad/images/coverimages/" + cover_image + "\"\n\
+                     alt=\"" + journal_name +" cover\"/>\n\
+            </a>\n\
+        </xsl:when>\n"
     return markup
 
 def render_recentlyintegrated(journal_name, cover_image):
