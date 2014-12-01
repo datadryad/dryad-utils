@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 
@@ -59,9 +60,9 @@ def main():
         epilog='Journal name and URL should be enclosed in double quotes.\nImage files should exist in both coverimages and recentlyIntegrated versions. Use resize_cover.py for those.',
         add_help=True,
         formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument('-n', '--name', metavar='"Journal Name"', type=str, required=True)
-    parser.add_argument('-u', '--url', metavar='"http://website.com/"', type=str, required=True)
-    parser.add_argument('-i', '--image', metavar='"image-filename.png"', type=str, required=True)
+    parser.add_argument('name', metavar='"Journal Name"', type=str)
+    parser.add_argument('url', metavar='"http://website.com/"', type=str)
+    parser.add_argument('image', metavar='"image-filename.png"', type=str)
 
     args = vars(parser.parse_args())
     print "Paste into dspace/modules/xmlui/src/main/webapp/themes/Mirage/Mirage.xsl"
