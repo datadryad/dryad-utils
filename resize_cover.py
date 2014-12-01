@@ -18,7 +18,7 @@ import sys
 try:
     from PIL import Image, ImageColor
 except ImportError as e:
-    sys.stderr.write('\nERROR: Pillow Not found. See http://pillow.readthedocs.org/en/latest/index.html for installation instructions\n\n')
+    sys.stderr.write('\nERROR: Pillow Not found. This script uses Pillow to read/write image files.\nSee http://pillow.readthedocs.org/en/latest/index.html for installation instructions\n\n')
     sys.exit(1)
 from os.path import basename, splitext, normpath, expanduser
 import argparse
