@@ -76,6 +76,8 @@ class CoverGenerator(object):
         """ Generate a cover image with the specified size """
         self.calculate_aspect_preserved_size()
         resized = self.image.copy().resize(self.aspect_preserved_size,Image.ANTIALIAS)
+        if resized.mode != 'RGB' and resized.mode != 'RGBA':
+            resized = resized.convert("RGB")
         # paste the resized into a new image
         color = ImageColor.getrgb(self.bgcolor)
         frame = Image.new(resized.mode, self.dims, color=color)
@@ -91,12 +93,12 @@ class CoverGenerator(object):
 
     def write_front_cover(self):
         self.generate_front_cover()
-        self.output_filename = self.front_output_dir() + "recentlyIntegrated-" + self.base + ".png"
+        self.output_filename = self.front_output_dir() + "/recentlyIntegrated-" + self.base + ".png"
         self.write_cover()
 
     def write_pkg_cover(self):
         self.generate_pkg_cover()
-        self.output_filename = self.pkg_output_dir() + self.base + ".png"
+        self.output_filename = self.pkg_output_dir() + "/" + self.base + ".png"
         self.write_cover()
 
 class DefaultHelpParser(argparse.ArgumentParser):
@@ -123,7 +125,6 @@ def main():
     parser.add_argument('--color', '-c',  metavar='"rgba(\'255,255,255,255)\'',type=str)
     args = vars(parser.parse_args())
     generate_covers(args['repo_root'], args['filename'], args['color'])
-    print args
 
 if __name__ == '__main__':
     main()
