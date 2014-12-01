@@ -67,6 +67,21 @@ elsevier_covers = (
     ("Flora - Morphology, Distribution, Functional Ecology of Plants","http://www.elsevier.com/locate/flora","flora.jpg"),
 )
 
+sep23_journals = (
+    ("Ecological Applications", "http://www.esajournals.org/loi/ecap", "ecoApp.png"),
+    ("Royal Society Open Science","http://royalsocietypublishing.org/royal-society-open-science","rsos.png"),
+)
+
+plos_journals = (
+    ("PLOS Biology", "http://journals.plos.org/plosbiology/","plosbiology.jpg"),
+    ("PLOS Computational Biology", "http://journals.plos.org/ploscompbiol/","ploscompbiol.jpg"),
+    ("PLOS Genetics", "http://journals.plos.org/plosgenetics/","plosgenetics.jpg"),
+    ("PLOS Medicine", "http://journals.plos.org/plosmedicine/","plosmedicine.jpg"),
+    ("PLOS Neglected Tropical Diseases", "http://journals.plos.org/plosntds/","plosntds.jpg"),
+    ("PLOS ONE", "http://www.plosone.org","plosone.jpg"),
+    ("PLOS Pathogens", "http://journals.plos.org/plospathogens/","plospath.jpg"),
+)
+
 def render_recentlyintegrated(journal_name, cover_image):
     escaped = journal_name.replace(' ', '%5C+')
     lowercased= journal_name.lower().replace(' ', '%5C+')
@@ -77,5 +92,13 @@ def render_recentlyintegrated(journal_name, cover_image):
     <img class=\"pub-cover\" src=\"/themes/Mirage/images/recentlyIntegrated-" + cover_image + "\" alt=\"" + journal_name + "\" /></a>"
     return markup
 
-for journal in elsevier_covers:
+recent_oct2014 = (
+    ("Ecological Applications", "http://www.esajournals.org/loi/ecap", "ecoApp.png"),
+    ("Royal Society Open Science","http://royalsocietypublishing.org/royal-society-open-science","rsos.png"),
+)
+
+for journal in plos_journals:
     print render_itemsummary(journal[0], journal[1], journal[2])
+
+for journal in recent_oct2014:
+    print render_recentlyintegrated(journal[0], journal[2])
