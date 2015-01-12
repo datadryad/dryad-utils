@@ -1,4 +1,27 @@
 #!/usr/bin/env python
+
+# This script adds or removes rows in the tasklistitem table, allowing "new" curators
+# to curate submissions that entered the workflow before they were added to the curators
+# group. It also removes epersons that are no longer in the curators group.
+#
+# It only works on a single doi, and requires sqlalchemy
+#
+# fix_tasklistitems.py doi:10.5061/dryad.xxxxx
+#
+# It connects to the Postgres database with parameters specified in dryad_credentials.py.
+# This script does not exist in the repo, you should create it:
+#
+# credentials = {
+#  'user': 'username',
+#  'password': 'password',
+#  'host': '127.0.0.1',
+#  'port': 6543,
+#  'database': 'database',
+#  }
+#
+# To use this with a remote server, create an SSH tunnel, e.g.:
+# ssh -L 6543:127.0.0.1:5432 username@host.com
+
 from sqlalchemy import Table, MetaData, create_engine
 import sys, copy
 from dryad_credentials import credentials
@@ -71,6 +94,7 @@ def insert_tasklistitem_row(conn, eperson_id, tasklistitem):
   
 def delete_eperson_from_tasklistitem(conn, eperson_id):
   query = 'delete from tasklistitem where eperson_id = %d' % (eperson_id,)
+  # Does not actually delete yet
   print query
 
 def generate_tasklistitem_prototype(workflow_item_id):
