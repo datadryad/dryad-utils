@@ -67,7 +67,7 @@ def insert_tasklistitem_row(conn, eperson_id, tasklistitem):
   workflow_item_id = tasklistitem['workflow_item_id']
   row = generate_tasklistitem_row(eperson_id, step, action, workflow_item_id)
   print row
-#  conn.execute(row)
+  conn.execute(row)
   
 def delete_eperson_from_tasklistitem(conn, eperson_id):
   query = 'delete from tasklistitem where eperson_id = %d' % (eperson_id,)
