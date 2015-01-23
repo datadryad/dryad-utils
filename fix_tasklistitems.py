@@ -98,7 +98,7 @@ def delete_eperson_from_tasklistitem(conn, eperson_id):
   print query
 
 def generate_tasklistitem_prototype(workflow_item_id):
-  return {'step_id' : 'dryadAcceptEditReject', 'action_id' : 'dryadAcceptEditRejectAction', 'workflow_item_id' : workflow_item_id}
+  return {'step_id' : 'dryadAcceptEditReject', 'action_id' : 'claimAction', 'workflow_item_id' : workflow_item_id}
 
 def fix_taskowners(doi):
   if doi is None:
