@@ -64,7 +64,6 @@ def query_bitstream_format(mimetype):
 def main():
     package_id = raw_input('Enter the package ID: ')
     bitstream_list = get_bitstreams_in_package(package_id)
-    pp = pprint.PrettyPrinter(indent=4)
     print "File ID\tbitstream ID\tfile name\tfile size\tchecksum"
     for file in bitstream_list:
         file_id = file['file_id']
