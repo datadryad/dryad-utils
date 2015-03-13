@@ -4,6 +4,7 @@ __author__ = 'dan'
 
 import re
 import os
+import sys
 import shutil
 import hashlib
 import mimetypes
@@ -141,10 +142,17 @@ def main():
     if check_write_access() == False:
         print "Cannot get write access to %s, check permissions or user account" % ASSETSTORE_PATH
         exit(-1)
-    bitstream_id = get_bitstream_id()
+    bitstream_id = None
+    largefile_path = ""
+    if len(sys.argv) == 3:
+        bitstream_id = int(sys.argv[1])
+        largefile_path = sys.argv[2]
+    else:
+        bitstream_id = get_bitstream_id()
+        largefile_path = get_largefile_path()
     print "Bitstream ID: %d" % bitstream_id
+
     assetstore_path = get_assetstore_path(bitstream_id)
-    largefile_path = get_largefile_path()
     dummyfile, largefile = None, None
     try:
         largefile = bitstream_file(largefile_path)
