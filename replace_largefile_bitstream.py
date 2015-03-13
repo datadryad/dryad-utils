@@ -158,8 +158,8 @@ def main():
     verify_file(bitstream_id, dummyfile)
 
     # Update the bitstream table
-    update_bitstream_table(bitstream_id, largefile)
     place_largefile(bitstream_id, largefile)
+    update_bitstream_table(bitstream_id, largefile)
 
     # Verify the replaced file is right
     replaced_file = bitstream_file(assetstore_path)
