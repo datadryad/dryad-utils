@@ -96,7 +96,7 @@ def place_largefile(bitstream_id, largefile):
     if not os.access(destination_path, os.W_OK):
         raise Exception("Unable to get write access on the destination path")
     print "Copying '%s' -> '%s'" % (largefile.path, destination_path)
-    shutil.copy(largefile.path, destination_path)
+    shutil.copyfile(largefile.path, destination_path)
 
 def dict_from_query(sql):
     # Now execute it
@@ -158,8 +158,8 @@ def main():
     verify_file(bitstream_id, dummyfile)
 
     # Update the bitstream table
-    update_bitstream_table(bitstream_id, largefile)
     place_largefile(bitstream_id, largefile)
+    update_bitstream_table(bitstream_id, largefile)
 
     # Verify the replaced file is right
     replaced_file = bitstream_file(assetstore_path)
