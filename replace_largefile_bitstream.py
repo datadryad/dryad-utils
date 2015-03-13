@@ -171,7 +171,12 @@ def main():
 
     # Verify the replaced file is right
     replaced_file = bitstream_file(assetstore_path)
-    verify_file(bitstream_id, replaced_file)
+    result = verify_file(bitstream_id, replaced_file)
+
+    if result == True:
+        print "SUCCESS: %s can be deleted." % largefile_path
+    else:
+        print "FAILURE: please report the output of this script to devs."
 
 if __name__ == '__main__':
     main()
