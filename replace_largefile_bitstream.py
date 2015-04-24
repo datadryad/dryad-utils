@@ -175,8 +175,10 @@ def main():
 
     if result == True:
         print "SUCCESS: %s can be deleted." % largefile_path
+        sys.exit(0)
     else:
         print "FAILURE: please report the output of this script to devs."
+        sys.exit(1)
 
 if __name__ == '__main__':
     main()
