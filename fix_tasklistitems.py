@@ -78,6 +78,11 @@ def get_workflow_item_id_for_doi(conn, doi):
   results = conn.execute(query)
   return list(result['workflow_item_id'] for result in results)[0]
 
+def get_item_id_for_doi(conn, doi):
+  query = 'select wfi.item_id as item_id from workflowitem wfi, metadatavalue mdv where wfi.item_id = mdv.item_id and mdv.metadata_field_id = 17 and mdv.text_value = \'%s\'' % (doi,)
+  results = conn.execute(query)
+  return list(result['item_id'] for result in results)[0]
+
 def get_distinct_workflow_item_ids(conn):
   query = 'select distinct(workflow_item_id) as workflow_item_id from tasklistitem where action_id = \'claimAction\''
   workflow_item_ids = []
@@ -112,11 +117,12 @@ def fix_taskowners(doi):
       workflow_item_ids = list(get_distinct_workflow_item_ids(conn))
     else:
       workflow_item_ids = [get_workflow_item_id_for_doi(conn, doi)]
+      item_id = [get_item_id_for_doi(conn, doi)][0]
+      print 'item id is %s' % (item_id)
     # Global list of epersons that are not curators and should be removed from
     # all tasklistitem rows
     epersons_to_remove = list() 
     for workflow_item_id in workflow_item_ids:
-      print workflow_item_id
       tasklistitems = get_tasklistitem_rows(conn, workflow_item_id)
       tasklistitem_prototype = None
       epersons_to_add = copy.copy(curator_ids)
