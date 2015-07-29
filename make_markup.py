@@ -14,8 +14,10 @@ __author__ = 'dan'
 
 import argparse
 import sys
+import urllib
 
 def render_itemsummary(journal_name, journal_url, cover_image):
+    journal_name = journal_name.replace('&', '&amp;')
     markup = "\
         <xsl:when test='$journal-name = \"" + journal_name + "\"'>\n\
             <a target=\"_blank\">\n\
@@ -38,13 +40,14 @@ def render_itemsummary(journal_name, journal_url, cover_image):
     return markup
 
 def render_recentlyintegrated(journal_name, cover_image):
-    escaped = journal_name.replace(' ', '%5C+')
-    lowercased= journal_name.lower().replace(' ', '%5C+')
+    html_escaped = journal_name.replace('&', '&amp;')
+    url_encoded = urllib.quote_plus(journal_name).replace('+', '%5C+')
+    lowercased= urllib.quote_plus(journal_name.lower()).replace('+', '%5C+')
     separator = "%5C%7C%5C%7C%5C%7C"
     markup = "\
         <!-- " + journal_name + " -->\n\
-		  <a class=\"single-image-link\" href=\"/discover?field=prism.publicationName_filter&amp;query=&amp;fq=prism.publicationName_filter%3A" + lowercased + separator + escaped + "\">\
-<img class=\"pub-cover\" src=\"/themes/Mirage/images/recentlyIntegrated-" + cover_image + "\" alt=\"" + journal_name + "\" /></a>"
+		  <a class=\"single-image-link\" href=\"/discover?field=prism.publicationName_filter&amp;query=&amp;fq=prism.publicationName_filter%3A" + lowercased + separator + url_encoded + "\">\
+<img class=\"pub-cover\" src=\"/themes/Mirage/images/recentlyIntegrated-" + cover_image + "\" alt=\"" + html_escaped + "\" /></a>"
     return markup
 
 # via http://stackoverflow.com/a/3637103
