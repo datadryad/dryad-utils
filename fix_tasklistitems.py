@@ -24,7 +24,7 @@
 
 from sqlalchemy import Table, MetaData, create_engine
 import sys, copy
-import os.system
+import os
 from dryad_credentials import credentials
 
 def get_engine():
