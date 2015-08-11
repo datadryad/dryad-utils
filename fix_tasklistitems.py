@@ -24,6 +24,7 @@
 
 from sqlalchemy import Table, MetaData, create_engine
 import sys, copy
+import os.system
 from dryad_credentials import credentials
 
 def get_engine():
@@ -95,7 +96,7 @@ def insert_tasklistitem_row(conn, eperson_id, tasklistitem):
   workflow_item_id = tasklistitem['workflow_item_id']
   row = generate_tasklistitem_row(eperson_id, step, action, workflow_item_id)
   print row
-  conn.execute(row)
+#   conn.execute(row)
   
 def delete_eperson_from_tasklistitem(conn, eperson_id):
   query = 'delete from tasklistitem where eperson_id = %d' % (eperson_id,)
@@ -106,6 +107,7 @@ def generate_tasklistitem_prototype(workflow_item_id):
   return {'step_id' : 'dryadAcceptEditReject', 'action_id' : 'claimAction', 'workflow_item_id' : workflow_item_id}
 
 def fix_taskowners(doi):
+  item_id = 0
   if doi is None:
     raise 'Must provide a DOI'
     return
@@ -144,11 +146,13 @@ def fix_taskowners(doi):
     epersons_to_remove = set(epersons_to_remove)
     for eperson_id in epersons_to_remove:
       delete_eperson_from_tasklistitem(conn, eperson_id)
+    return item_id
 
 if __name__ == '__main__':
   if len(sys.argv) > 1:
     doi = sys.argv[1]
   else:
     doi = None
-  fix_taskowners(doi)
+  item_id = fix_taskowners(doi)
+  os.system("/opt/dryad/bin/dspace update-discovery-index -i %s" % (item_id))
 
