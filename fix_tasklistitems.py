@@ -154,5 +154,7 @@ if __name__ == '__main__':
   else:
     doi = None
   item_id = fix_taskowners(doi)
-  os.system("/opt/dryad/bin/dspace update-discovery-index -i %s" % (item_id))
+  statement = "/opt/dryad/bin/dspace update-discovery-index -i %s" % (item_id)
+  print statement
+  os.system(statement)
 
