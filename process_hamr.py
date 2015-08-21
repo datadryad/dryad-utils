@@ -47,8 +47,11 @@ def perform_hamr_task(doi):
   #http://hdl.handle.net/10255/dryad.35555
   match = re.search('(10255\/dryad\.\d+)', collection_id)
   if match:
-    collection_id = match.group(0)  
-    print collection_id
+    collection_id = match.group(0)
+    statement = "/opt/dryad/bin/dspace curate -v -t odinshamr -i %s -r -" % (collection_id)
+    print statement
+    os.system(statement)
+
   else:
     print "no match"
     
