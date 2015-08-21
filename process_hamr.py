@@ -21,6 +21,7 @@
 from sqlalchemy import Table, MetaData, create_engine
 import sys, copy
 import os
+import re
 from dryad_credentials import credentials
 
 def get_engine():
@@ -43,7 +44,10 @@ def perform_hamr_task(doi):
   engine = get_engine()
   with engine.connect() as conn:
     collection_id = [get_collection_id_for_doi(conn, doi)][0]
-    print collection_id
+  #http://hdl.handle.net/10255/dryad.35555
+  m = re.search('(10255\/dryad\.\d+)', doi)
+  collection_id = m.group(0)  
+  print collection_id
     
 if __name__ == '__main__':
   if len(sys.argv) > 1:
