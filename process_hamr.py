@@ -47,7 +47,7 @@ def perform_hamr_task(doi):
   #http://hdl.handle.net/10255/dryad.35555
   match = re.search('(10255\/dryad\.\d+)', collection_id)
   if match:
-    collection_id = m.group(0)  
+    collection_id = match.group(0)  
     print collection_id
   else:
     print "no match"
