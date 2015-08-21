@@ -43,6 +43,7 @@ def perform_hamr_task(doi):
   engine = get_engine()
   with engine.connect() as conn:
     collection_id = [get_collection_id_for_doi(conn, doi)][0]
+    print collection_id
     
 if __name__ == '__main__':
   if len(sys.argv) > 1:
