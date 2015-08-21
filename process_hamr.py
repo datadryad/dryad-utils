@@ -31,9 +31,9 @@ def get_engine():
 
 def get_collection_id_for_doi(conn, doi):
 #  query = 'select wfi.workflow_id as workflow_item_id from workflowitem wfi, metadatavalue mdv where wfi.item_id = mdv.item_id and mdv.metadata_field_id = 17 and mdv.text_value = \'%s\'' % (doi,)
-  query = 'select mdv_doi.text_value, mdv_hdl.text_value from metadatavalue mdv_doi, metadatavalue mdv_hdl where mdv_doi.item_id=mdv_hdl.item_id and (mdv_doi.metadata_field_id=17 and mdv_doi.text_value=\'%s\') and mdv_hdl.metadata_field_id=25' % (doi,)
+  query = 'select mdv_hdl.text_value as handle from metadatavalue mdv_doi, metadatavalue mdv_hdl where mdv_doi.item_id=mdv_hdl.item_id and (mdv_doi.metadata_field_id=17 and mdv_doi.text_value=\'%s\') and mdv_hdl.metadata_field_id=25' % (doi,)
   results = conn.execute(query)
-  return list(result['workflow_item_id'] for result in results)[0]
+  return list(result['handle'] for result in results)[0]
 
 def perform_hamr_task(doi):
   item_id = 0
