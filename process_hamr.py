@@ -45,7 +45,7 @@ def perform_hamr_task(doi):
   with engine.connect() as conn:
     collection_id = [get_collection_id_for_doi(conn, doi)][0]
   #http://hdl.handle.net/10255/dryad.35555
-  m = re.search('(10255\/dryad\.\d+)', doi)
+  m = re.match('(10255\/dryad\.\d+)', doi)
   collection_id = m.group(0)  
   print collection_id
     
