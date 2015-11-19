@@ -101,8 +101,8 @@ def file1_is_newer(file1,file2):
         return True
      
 # then check to see if one is newer
-    stat1 = os.stat(file1)
-    stat2 = os.stat(file2)
+    stat1 = os.stat(os.path.join(mypath,'archived',file1))
+    stat2 = os.stat(os.path.join(mypath,'archived',file2))
     if (stat1.st_mtime > stat2.st_mtime):
         return True
     return False
