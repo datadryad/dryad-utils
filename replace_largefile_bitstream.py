@@ -47,21 +47,6 @@ class bitstream_file(object):
                     break
                 m.update(data)
             return m.hexdigest()
-    def check_mimetype(self):
-        # If the mime type is none, prompt for it
-        if self.mimetype is None:
-            print "Unable to guess MIME type"
-        while self.mimetype is None:
-            raw = raw_input("Please enter a MIME type or leave blank for 'application/octet-stream': ")
-            if len(raw) == 0:
-                self.mimetype = 'application/octet-stream'
-            else:
-                self.mimetype = raw
-            if query_bitstream_format(self.mimetype) is None:
-                print "MIME type %s not found in bitstreamformat table, please try again." % self.mimetype
-                self.mimetype = None
-        print "Using MIME type %s" % self.mimetype
-
     def __unicode__(self):
         return u'Name: %s, Size: %d, MD5: %s, Mime-Type: %s' % (self.name, self.size, self.md5(), self.mimetype)
 
@@ -116,14 +101,19 @@ def query_bitstream_table(bitstream_id):
           'FROM bitstream WHERE bitstream_id = %d' % bitstream_id
     return dict_from_query(sql)
 
-def query_bitstream_format(mimetype):
-    sql = "SELECT bitstream_format_id FROM bitstreamformatregistry where mimetype = '%s'" % mimetype
+def query_bitstream_format(large_file):
+#     sql = "SELECT bitstream_format_id FROM bitstreamformatregistry where mimetype = '%s'" % mimetype
+    extension = ""
+    extension_match = re.match("^.*\.(.+)$", large_file.name)
+    if extension_match != None:
+        extension = extension_match.group(1)  
+    sql = "SELECT bitstreamformatregistry.* FROM bitstreamformatregistry, fileextension WHERE fileextension.extension LIKE '%s' AND bitstreamformatregistry.bitstream_format_id=fileextension.bitstream_format_id" % extension
     return dict_from_query(sql)
 
 def update_bitstream_table(bitstream_id, large_file):
-    format_dict = query_bitstream_format(large_file.mimetype)
+    format_dict = query_bitstream_format(large_file)
     if format_dict is None:
-        raise Exception("Critical: MIME type '%s' not found" % large_file.mimetype)
+        raise Exception("Critical: File type not found for extension '%s'" % large_file.name)
     format_id = format_dict['bitstream_format_id'] # stays a string
     sql = "UPDATE bitstream set size_bytes=%d, name='%s', source='%s' ,checksum='%s', bitstream_format_id=%s where bitstream_id = %d" % (
         large_file.size,
@@ -156,7 +146,6 @@ def main():
     dummyfile, largefile = None, None
     try:
         largefile = bitstream_file(largefile_path)
-        largefile.check_mimetype()
         dummyfile = bitstream_file(assetstore_path)
     except BaseException as e:
         print "Unable to read file: %s" % e
