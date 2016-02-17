@@ -58,6 +58,9 @@ def verify_file(bitstream_id, file):
     Looks up the file info in the database, verifies its size and md5 sum against what's in postgres
     '''
     file_dict = query_bitstream_table(bitstream_id)
+    if file_dict is None:
+        print "No file found for bitstream_id %d" % bitstream_id
+        return False
     # size
     if int(file_dict['size_bytes']) != file.size:
         print "Size mismatch: %d / %d" % (int(file_dict['size_bytes']), file.size)
