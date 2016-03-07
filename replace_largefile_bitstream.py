@@ -58,6 +58,9 @@ def verify_file(bitstream_id, file):
     Looks up the file info in the database, verifies its size and md5 sum against what's in postgres
     '''
     file_dict = query_bitstream_table(bitstream_id)
+    if file_dict is None:
+        print "No file found for bitstream_id %d" % bitstream_id
+        return False
     # size
     if int(file_dict['size_bytes']) != file.size:
         print "Size mismatch: %d / %d" % (int(file_dict['size_bytes']), file.size)
@@ -88,7 +91,7 @@ def dict_from_query(sql):
     # Now execute it
     cmd = "psql -A -U dryad_app dryad_repo -c \"%s\"" % sql
     output = [line.strip().split('|') for line in os.popen(cmd).readlines()]
-    if len(output) == 1:
+    if len(output) <= 2: # the output should have at least 3 lines: header, body rows, number of rows
         return None
     else:
         return dict(zip(output[0],output[1]))
@@ -113,8 +116,9 @@ def query_bitstream_format(large_file):
 def update_bitstream_table(bitstream_id, large_file):
     format_dict = query_bitstream_format(large_file)
     if format_dict is None:
-        raise Exception("Critical: File type not found for extension '%s'" % large_file.name)
-    format_id = format_dict['bitstream_format_id'] # stays a string
+        format_id = 1
+    else:
+        format_id = format_dict['bitstream_format_id'] # stays a string
     sql = "UPDATE bitstream set size_bytes=%d, name='%s', source='%s' ,checksum='%s', bitstream_format_id=%s where bitstream_id = %d" % (
         large_file.size,
         large_file.name,
