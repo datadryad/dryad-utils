@@ -115,7 +115,7 @@ def query_bitstream_format(large_file):
 
 def update_bitstream_table(bitstream_id, large_file):
     format_dict = query_bitstream_format(large_file)
-    if format_dict is None:
+    if format_dict is None or format_dict['bitstream_format_id'] == "(0 rows)":
         format_id = 1
     else:
         format_id = format_dict['bitstream_format_id'] # stays a string
