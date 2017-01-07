@@ -52,7 +52,7 @@ def main():
     startdate = strptime(sys.argv[1], "%Y-%m-%d")
     enddate = strptime(sys.argv[2], "%Y-%m-%d")
     prov_field = get_field_id('dc.description.provenance')
-    items = rows_from_query ("select distinct nsf.item_id, substring(prov.text_value, 'Made available in DSpace on (\d+-\d+-\d+)T.+') from metadatavalue as nsf, metadatavalue as prov where nsf.authority='NSF' and nsf.item_id=prov.item_id and prov.metadata_field_id=%s and prov.text_value like 'Made available in DSpace%%' order by substring" % prov_field)
+    items = rows_from_query ("select distinct nsf.item_id, substring(prov.text_value, 'Made available in DSpace on (\d+-\d+-\d+)T.+') from metadatavalue as nsf, metadatavalue as prov where nsf.authority='http://dx.doi.org/10.13039/100000001' and nsf.item_id=prov.item_id and prov.metadata_field_id=%s and prov.text_value like 'Made available in DSpace%%' order by substring" % prov_field)
     labels = dict(zip(items[0], range(0,len(items[0]))))
     
     print "item\tarchive date\tdoi\tgrant provided\tis valid?\ttitle\tauthors"
