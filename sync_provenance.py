@@ -59,7 +59,7 @@ def issueRequest (path, data, opener):
             response = e.fp.read()
             if not response.endswith("\n"): response += "\n"
             sys.stderr.write(response)
-        sys.exit(1)
+#         sys.exit(1)
 
 def printAnvlResponse (response, sortLines=False):
     response = response.splitlines()
