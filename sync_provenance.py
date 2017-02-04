@@ -121,7 +121,8 @@ def ezid(id, filename, username, password):
 #     print data
 
     response = issueRequest("id/"+encode(id), data, opener)
-    printAnvlResponse(response)
+    if response is not None:
+        printAnvlResponse(response)
 
 def main():
     username = sys.argv[1]
