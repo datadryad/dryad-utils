@@ -133,13 +133,13 @@ def main():
     
     doi_field = get_field_id('dc.identifier')
     items = rows_from_query ("SELECT item.item_id AS item_id, mdv.text_value AS doi FROM item, metadatavalue AS mdv WHERE item.item_id = mdv.item_id AND item.in_archive = 't' AND mdv.metadata_field_id = %s AND mdv.text_value like 'doi%%' and item.item_id > %s order by item.item_id asc" % (doi_field, cursor))
-    curr_item = 0
+    curr_item = ""
     labels = dict(zip(items[0], range(0,len(items[0]))))
     for item in items[1:-1]:
         item_id = item[labels['item_id']]
         item_doi = item[labels['doi']]
         if item_id == curr_item:
-            print "item %d == %d" % (item_id, curr_item)
+            print "item %s == %s" % (item_id, curr_item)
             continue
         curr_item = item_id
         print "%s\t%s" % (item_id, item_doi)
