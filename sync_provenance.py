@@ -139,7 +139,6 @@ def main():
         item_id = item[labels['item_id']]
         item_doi = item[labels['doi']]
         if item_id == curr_item:
-            print "item %s == %s" % (item_id, curr_item)
             continue
         curr_item = item_id
         print "%s\t%s" % (item_id, item_doi)
