@@ -55,7 +55,7 @@ def main():
     items = rows_from_query ("select distinct nsf.item_id, substring(prov.text_value, 'Made available in DSpace on (\d+-\d+-\d+)T.+') from metadatavalue as nsf, metadatavalue as prov where nsf.authority='http://dx.doi.org/10.13039/100000001' and nsf.item_id=prov.item_id and prov.metadata_field_id=%s and prov.text_value like 'Made available in DSpace%%' order by substring" % prov_field)
     labels = dict(zip(items[0], range(0,len(items[0]))))
     
-    print "item\tarchive date\tdoi\tgrant provided\tis valid?\ttitle\tauthors"
+    print "item\tarchive date\tdoi\tgrant provided\tis valid?\tNSF Sponsored?\ttitle\tauthors"
     for item in items[1:-1]:
 #     Dryad DOI, grant number provided (with confidence value), article DOI, authors, article title.
         item_id = item[labels['item_id']]
@@ -85,6 +85,13 @@ def main():
             
             # get the item's title:    
             title = dict_from_query("select text_value from metadatavalue where item_id = %s and metadata_field_id = %s" % (item_id, get_field_id('dc.title')))['text_value'] 
+            
+            # get sponsor from shoppingcart
+            sponsor_id = dict_from_query("select sponsor_id from shoppingcart where item = %s" % (item_id))['sponsor_id']
+            nsf_sponsor_id = dict_from_query("select parent_id from conceptmetadatavalue where text_value = 'http://dx.doi.org/10.13039/100000001'")['parent_id']
+            sponsored = 'False'
+            if nsf_sponsor_id == sponsor_id:
+                sponsored = 'True'
             
             next = '\t'.join([item_id, strftime("%Y-%m-%d", item_date), doi, grant, valid, title, authorstring])
             print '%s' % next
