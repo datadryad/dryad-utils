@@ -87,6 +87,7 @@ def main():
             title = dict_from_query("select text_value from metadatavalue where item_id = %s and metadata_field_id = %s" % (item_id, get_field_id('dc.title')))['text_value'] 
             
             # get sponsor from shoppingcart
+            print item_id
             sponsor_id = dict_from_query("select sponsor_id from shoppingcart where item = %s" % (item_id))['sponsor_id']
             nsf_sponsor_id = dict_from_query("select parent_id from conceptmetadatavalue where text_value = 'http://dx.doi.org/10.13039/100000001'")['parent_id']
             sponsored = 'False'
@@ -94,7 +95,7 @@ def main():
                 sponsored = 'True'
             
             next = '\t'.join([item_id, strftime("%Y-%m-%d", item_date), doi, grant, valid, title, authorstring])
-            print '%s' % next
+#             print '%s' % next
             
 if __name__ == '__main__':
     main()
