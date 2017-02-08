@@ -95,7 +95,6 @@ def main():
             title = var_from_query("select text_value from metadatavalue where item_id = %s and metadata_field_id = %s" % (item_id, get_field_id('dc.title')),'text_value') 
             
             # get sponsor from shoppingcart
-            print item_id
             sponsor_id = var_from_query("select sponsor_id from shoppingcart where item = %s" % (item_id),'sponsor_id')
             # don't print if it's a versioned item, which means there's no cart
             version = False
@@ -109,9 +108,7 @@ def main():
                         
                 next = '\t'.join([item_id, strftime("%Y-%m-%d", item_date), doi, grant, valid, title, authorstring])
                 print '%s' % next
-            else:
-                print "VERSION: " + doi
-            
+
 if __name__ == '__main__':
     main()
 
