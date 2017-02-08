@@ -98,11 +98,11 @@ def main():
             print item_id
             sponsor_id = var_from_query("select sponsor_id from shoppingcart where item = %s" % (item_id),'sponsor_id')
             # don't print if it's a versioned item, which means there's no cart
-            version = True
+            version = False
             if sponsor_id is None:
                 version = True
                 
-            if version:
+            if version == False:
                 sponsored = 'False'
                 if nsf_sponsor_id == sponsor_id:
                     sponsored = 'True'
