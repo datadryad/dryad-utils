@@ -45,12 +45,12 @@ def reindex_item(item_id):
     if m is not None:
         print m.group(1)
     
-    
 def main():
     parser = OptionParser()
     parser.add_option("--date_from", dest="date_from", help="find items archived after this date")
     parser.add_option("--date_to", dest="date_to", help="find items archived before this date")
-    parser.add_option("--cursor", dest="cursor", help="starting item_id for process")
+    parser.add_option("--item_from", dest="item_from", help="starting item_id for process")
+    parser.add_option("--item_to", dest="item_to", help="ending item_id for process")
     (options, args) = parser.parse_args()
         
     if options.date_from is not None or options.date_to is not None:
@@ -64,6 +64,18 @@ def main():
             enddate = datetime.strptime(options.date_to, "%Y-%m-%d")        
         acc_field = get_field_id('dc.date.accessioned')
         sql = "select item.item_id as item_id, mdv.text_value as date from item, metadatavalue as mdv where item.item_id = mdv.item_id and item.owning_collection = 2 and mdv.metadata_field_id = %s and item.in_archive = 't' and mdv.text_value >= '%s' and mdv.text_value <= '%s'" % (acc_field, startdate.strftime('%Y-%m-%d'), enddate.strftime('%Y-%m-%d'))
+    elif options.item_from is not None or options.item_to is not None:
+        if options.item_from is None:
+            start = 0
+        else:
+            start = options.item_from
+        if options.item_to is None:
+            end = dict_from_query("select last_value from item_seq")['last_value']
+        else:
+            end = options.item_to
+        print "%s to %s" % (str(start), str(end))
+        sql = "select item_id from item where owning_collection = 2 and in_archive = 't' and item_id >= %s and item_id <= %s order by item_id asc" % (str(start), str(end))
+        print sql
     items = rows_from_query (sql)
     labels = dict(zip(items[0], range(0,len(items[0]))))
     print "%d items to index" % (len(items) -2)
