@@ -80,12 +80,15 @@ def main():
     labels = dict(zip(items[0], range(0,len(items[0]))))
     print "%d items to index" % (len(items) -2)
     curr_item = ""
+    index = 1
+    last_index = len(items) -2
     for item in items[1:-1]:
         item_id = item[labels['item_id']]
         if item_id == curr_item:
             continue
         curr_item = item_id
-        print "indexing %s:" % item_id
+        print "%d of %d: indexing %s:" % (index, last_index, item_id)
+        index++
         reindex_item(item_id)
 if __name__ == '__main__':
     main()
