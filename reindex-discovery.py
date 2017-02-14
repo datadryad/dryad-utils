@@ -90,6 +90,7 @@ def main():
         print "%d of %d: indexing %s:" % (index, last_index, item_id)
         index = index + 1
         reindex_item(item_id)
+    print "DONE"
 if __name__ == '__main__':
     main()
 
