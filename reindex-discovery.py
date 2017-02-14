@@ -88,7 +88,7 @@ def main():
             continue
         curr_item = item_id
         print "%d of %d: indexing %s:" % (index, last_index, item_id)
-        index++
+        index = index + 1
         reindex_item(item_id)
 if __name__ == '__main__':
     main()
