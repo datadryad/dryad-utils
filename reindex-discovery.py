@@ -52,15 +52,22 @@ def main():
     parser.add_option("--date_to", dest="date_to", help="find items archived before this date")
     parser.add_option("--cursor", dest="cursor", help="starting item_id for process")
     (options, args) = parser.parse_args()
-    
-    startdate = datetime.strptime(options.date_from, "%Y-%m-%d")
-    enddate = datetime.strptime(options.date_to, "%Y-%m-%d")
-    acc_field = get_field_id('dc.date.accessioned')
-    sql = "select item.item_id as item_id, mdv.text_value as date from item, metadatavalue as mdv where item.item_id = mdv.item_id and item.owning_collection = 2 and mdv.metadata_field_id = %s and item.in_archive = 't' and mdv.text_value >= '%s' and mdv.text_value <= '%s'" % (acc_field, startdate.strftime('%Y-%m-%d'), enddate.strftime('%Y-%m-%d'))
+        
+    if options.date_from is not None or options.date_to is not None:
+        if options.date_from is None:
+            startdate = datetime.strptime("1900-01-01", "%Y-%m-%d")
+        else:
+            startdate = datetime.strptime(options.date_from, "%Y-%m-%d")
+        if options.date_to is None:
+            enddate = date.today()
+        else:
+            enddate = datetime.strptime(options.date_to, "%Y-%m-%d")        
+        acc_field = get_field_id('dc.date.accessioned')
+        sql = "select item.item_id as item_id, mdv.text_value as date from item, metadatavalue as mdv where item.item_id = mdv.item_id and item.owning_collection = 2 and mdv.metadata_field_id = %s and item.in_archive = 't' and mdv.text_value >= '%s' and mdv.text_value <= '%s'" % (acc_field, startdate.strftime('%Y-%m-%d'), enddate.strftime('%Y-%m-%d'))
     items = rows_from_query (sql)
-    curr_item = ""
     labels = dict(zip(items[0], range(0,len(items[0]))))
     print "%d items to index" % (len(items) -2)
+    curr_item = ""
     for item in items[1:-1]:
         item_id = item[labels['item_id']]
         if item_id == curr_item:
