@@ -60,13 +60,13 @@ def main():
     items = rows_from_query (sql)
     curr_item = ""
     labels = dict(zip(items[0], range(0,len(items[0]))))
+    print "%d items to index" % (len(items) -2)
     for item in items[1:-1]:
         item_id = item[labels['item_id']]
-        item_doi = item[labels['date']]
         if item_id == curr_item:
             continue
         curr_item = item_id
-        print "%s\t%s" % (item_id, item_doi)
+        print "indexing %s:" % item_id
         reindex_item(item_id)
 if __name__ == '__main__':
     main()
