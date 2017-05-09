@@ -62,8 +62,7 @@ def main():
             enddate = date.today()
         else:
             enddate = datetime.strptime(options.date_to, "%Y-%m-%d")        
-        acc_field = get_field_id('dc.date.accessioned')
-        sql = "select item.item_id as item_id, mdv.text_value as date from item, metadatavalue as mdv where item.item_id = mdv.item_id and item.owning_collection = 2 and mdv.metadata_field_id = %s and item.in_archive = 't' and mdv.text_value >= '%s' and mdv.text_value <= '%s'" % (acc_field, startdate.strftime('%Y-%m-%d'), enddate.strftime('%Y-%m-%d'))
+        sql = "select * from item where owning_collection = 2 and item.in_archive = 't' and item.last_modified >= '%s' and item.last_modified <= '%s'" % (startdate.strftime('%Y-%m-%d'), enddate.strftime('%Y-%m-%d'))
     elif options.item_from is not None or options.item_to is not None:
         if options.item_from is None:
             start = 0
