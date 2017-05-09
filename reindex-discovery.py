@@ -52,7 +52,7 @@ def main():
     parser.add_option("--item_from", dest="item_from", help="starting item_id for process")
     parser.add_option("--item_to", dest="item_to", help="ending item_id for process")
     (options, args) = parser.parse_args()
-        
+    sql = "select item_id from item where owning_collection = 2 and in_archive = 't' order by item_id asc"    
     if options.date_from is not None or options.date_to is not None:
         if options.date_from is None:
             startdate = datetime.strptime("1900-01-01", "%Y-%m-%d")
