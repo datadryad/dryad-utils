@@ -20,6 +20,12 @@ def dict_from_query(sql):
         return None
     else:
         return dict(zip(output[0],output[1]))
+        
+def var_from_query(sql, param):
+    dict = dict_from_query(sql)
+    if dict is not None:
+        return dict[param]
+    return None
 
 def rows_from_query(sql):
     # Now execute it
@@ -37,11 +43,11 @@ def update_sponsor_id(name, item_id):
 
 def get_field_id(name):
     parts = re.split('\.', name)
-    schema = dict_from_query("select metadata_schema_id from metadataschemaregistry where short_id = '%s'" % parts[0])['metadata_schema_id']
+    schema = var_from_query("select metadata_schema_id from metadataschemaregistry where short_id = '%s'" % parts[0],'metadata_schema_id')
     if len(parts) > 2:
-        field_id = dict_from_query("select metadata_field_id from metadatafieldregistry where metadata_schema_id=%s and element='%s' and qualifier = '%s'" % (schema, parts[1], parts[2]))['metadata_field_id']
+        field_id = var_from_query("select metadata_field_id from metadatafieldregistry where metadata_schema_id=%s and element='%s' and qualifier = '%s'" % (schema, parts[1], parts[2]),'metadata_field_id')
     else:
-        field_id = dict_from_query("select metadata_field_id from metadatafieldregistry where metadata_schema_id=%s and element='%s' and qualifier is null" % (schema, parts[1]))['metadata_field_id']
+        field_id = var_from_query("select metadata_field_id from metadatafieldregistry where metadata_schema_id=%s and element='%s' and qualifier is null" % (schema, parts[1]),'metadata_field_id')
     return field_id
 
 def main():
@@ -54,8 +60,10 @@ def main():
     prov_field = get_field_id('dc.description.provenance')
     items = rows_from_query ("select distinct nsf.item_id, substring(prov.text_value, 'Made available in DSpace on (\d+-\d+-\d+)T.+') from metadatavalue as nsf, metadatavalue as prov where nsf.authority='http://dx.doi.org/10.13039/100000001' and nsf.item_id=prov.item_id and prov.metadata_field_id=%s and prov.text_value like 'Made available in DSpace%%' order by substring" % prov_field)
     labels = dict(zip(items[0], range(0,len(items[0]))))
-    
-    print "item\tarchive date\tdoi\tgrant provided\tis valid?\ttitle\tauthors"
+
+    nsf_sponsor_id = var_from_query("select parent_id from conceptmetadatavalue where text_value = 'http://dx.doi.org/10.13039/100000001'",'parent_id')
+   
+    print "item\tarchive date\tdoi\tgrant provided\tis valid?\tNSF Sponsored?\ttitle\tauthors"
     for item in items[1:-1]:
 #     Dryad DOI, grant number provided (with confidence value), article DOI, authors, article title.
         item_id = item[labels['item_id']]
@@ -63,7 +71,7 @@ def main():
         
         if item_date >= startdate and item_date <= enddate:
             # get the item's DOI:
-            doi = dict_from_query("select text_value from metadatavalue where item_id = %s and metadata_field_id = %s" % (item_id, get_field_id('dc.identifier')))['text_value']
+            doi = var_from_query("select text_value from metadatavalue where item_id = %s and metadata_field_id = %s" % (item_id, get_field_id('dc.identifier')),'text_value')
             
             # get the item's grant number:
             fundingEntity = dict_from_query("select text_value, authority, confidence from metadatavalue where item_id = %s and metadata_field_id = %s" % (item_id, get_field_id('dryad.fundingEntity'))) 
@@ -84,11 +92,24 @@ def main():
             authorstring = '; '.join(authorlist)
             
             # get the item's title:    
-            title = dict_from_query("select text_value from metadatavalue where item_id = %s and metadata_field_id = %s" % (item_id, get_field_id('dc.title')))['text_value'] 
+            title = var_from_query("select text_value from metadatavalue where item_id = %s and metadata_field_id = %s" % (item_id, get_field_id('dc.title')),'text_value') 
             
-            next = '\t'.join([item_id, strftime("%Y-%m-%d", item_date), doi, grant, valid, title, authorstring])
-            print '%s' % next
-            
+            # get sponsor from shoppingcart
+            sponsor_id = var_from_query("select sponsor_id from shoppingcart where item = %s" % (item_id),'sponsor_id')
+            journal = var_from_query("select journal from shoppingcart where item = %s" % (item_id),'journal')
+            # don't print if it's a versioned item, which means there's no cart
+            version = False
+            if sponsor_id is None:
+                version = True
+                
+            if version == False:
+                sponsored = 'False'
+                if nsf_sponsor_id == sponsor_id:
+                    sponsored = 'True'
+                        
+                next = '\t'.join([item_id, strftime("%Y-%m-%d", item_date), doi, grant, valid, journal, title, authorstring])
+                print '%s' % next
+
 if __name__ == '__main__':
     main()
 
