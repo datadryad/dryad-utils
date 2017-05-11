@@ -52,7 +52,7 @@ def main():
     parser.add_option("--item_from", dest="item_from", help="starting item_id for process")
     parser.add_option("--item_to", dest="item_to", help="ending item_id for process")
     (options, args) = parser.parse_args()
-        
+    sql = "select item_id from item where owning_collection = 2 and in_archive = 't' order by item_id asc"    
     if options.date_from is not None or options.date_to is not None:
         if options.date_from is None:
             startdate = datetime.strptime("1900-01-01", "%Y-%m-%d")
@@ -62,8 +62,7 @@ def main():
             enddate = date.today()
         else:
             enddate = datetime.strptime(options.date_to, "%Y-%m-%d")        
-        acc_field = get_field_id('dc.date.accessioned')
-        sql = "select item.item_id as item_id, mdv.text_value as date from item, metadatavalue as mdv where item.item_id = mdv.item_id and item.owning_collection = 2 and mdv.metadata_field_id = %s and item.in_archive = 't' and mdv.text_value >= '%s' and mdv.text_value <= '%s'" % (acc_field, startdate.strftime('%Y-%m-%d'), enddate.strftime('%Y-%m-%d'))
+        sql = "select * from item where owning_collection = 2 and item.in_archive = 't' and item.last_modified >= '%s' and item.last_modified <= '%s'" % (startdate.strftime('%Y-%m-%d'), enddate.strftime('%Y-%m-%d'))
     elif options.item_from is not None or options.item_to is not None:
         if options.item_from is None:
             start = 0
