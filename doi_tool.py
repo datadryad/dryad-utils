@@ -24,24 +24,28 @@ def main():
     parser.add_option("--username", dest="username", help="EZID username")
     parser.add_option("--password", dest="password", help="EZID password")
     (options, args) = parser.parse_args()
+    opt_array = dict(doi=options.doi, is_blackout=options.is_blackout, action=options.action, username=options.username, password=options.password)
+    run_ezid(opt_array)
     
-    doi = options.doi
+def run_ezid(options):
+    # options should have doi, is_blackout, action, username, password
+    doi = options['doi']
     f = None
     args = []
     
     # process username/password
-    if options.username is None or options.password is None:
+    if options['username'] is None or options['password'] is None:
         print "Username and password must be provided"
         return
-    args.append("%s:%s" % (options.username, options.password))
+    args.append("%s:%s" % (options['username'], options['password']))
     
     # add action
-    if (options.action == 'register') or (options.action == 'create'): 
+    if (options['action'] == 'register') or (options['action'] == 'create'): 
         args.append("create")
-    elif (options.action == 'update'):
+    elif (options['action'] == 'update'):
         args.append("update")
     else:
-        print "%s is not a valid action" % (options.action)
+        print "%s is not a valid action" % (options['action'])
         return
     
     # add ezid doi to register
@@ -57,7 +61,7 @@ def main():
     doi_path = 'http://datadryad.org/resource/%s/mets.xml' % (doi)
     target_url = 'http://datadryad.org/resource/%s' % (doi)
     
-    if options.is_blackout is True:
+    if options['is_blackout'] is True:
         cmd = 'xsltproc /opt/dryad/config/crosswalks/DIM2DATACITE-BLACKOUT.xsl %s' % doi_path
         target_url = 'http://datadryad.org/publicationBlackout'
     else:   
