@@ -8,8 +8,11 @@ import re
 import os
 from optparse import OptionParser
 from datetime import datetime, date, time
+from doi_tool import run_ezid
 
 # Global variables that are initialized farther down.
+_username = None
+_password = None
 
 def dict_from_query(sql):
     # Now execute it
@@ -45,13 +48,26 @@ def reindex_item(item_id):
     if m is not None:
         print m.group(1)
     
+def update_ezid(item_id):
+    global _username, _password
+    doi_field_id = get_field_id('dc.identifier');
+    doi = dict_from_query("select text_value from metadatavalue where item_id = %s and metadata_field_id = %s;" % (item_id, doi_field_id))['text_value']
+    if doi is not None:
+        options = dict(doi=doi, is_blackout='False', action='update', username=_username, password=_password)
+        run_ezid(options)
+
 def main():
     parser = OptionParser()
     parser.add_option("--date_from", dest="date_from", help="find items archived after this date")
     parser.add_option("--date_to", dest="date_to", help="find items archived before this date")
     parser.add_option("--item_from", dest="item_from", help="starting item_id for process")
     parser.add_option("--item_to", dest="item_to", help="ending item_id for process")
+    parser.add_option("--username", dest="username", help="EZID username")
+    parser.add_option("--password", dest="password", help="EZID password")
     (options, args) = parser.parse_args()
+    global _username, _password
+    _username = options.username
+    _password = options.password
     sql = "select item_id from item where owning_collection = 2 and in_archive = 't' order by item_id asc"    
     if options.date_from is not None or options.date_to is not None:
         if options.date_from is None:
@@ -89,6 +105,7 @@ def main():
         print "%d of %d: indexing %s:" % (index, last_index, item_id)
         index = index + 1
         reindex_item(item_id)
+        update_ezid(item_id)
     print "DONE"
 if __name__ == '__main__':
     main()
