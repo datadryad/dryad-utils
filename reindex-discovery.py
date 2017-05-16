@@ -6,6 +6,7 @@ __author__ = 'daisieh'
 
 import re
 import os
+import sys
 from optparse import OptionParser
 from datetime import datetime, date, time
 from doi_tool import run_ezid
@@ -47,6 +48,7 @@ def reindex_item(item_id):
     m = re.search('Wrote Item: (.*) to Index', result2.read())
     if m is not None:
         print m.group(1)
+    sys.stdout.flush()
     
 def update_ezid(item_id):
     global _username, _password
@@ -55,6 +57,7 @@ def update_ezid(item_id):
     if doi is not None:
         options = dict(doi=doi, is_blackout='False', action='update', username=_username, password=_password)
         run_ezid(options)
+    sys.stdout.flush()
 
 def main():
     parser = OptionParser()
@@ -94,6 +97,7 @@ def main():
     items = rows_from_query (sql)
     labels = dict(zip(items[0], range(0,len(items[0]))))
     print "%d items to index" % (len(items) -2)
+    sys.stdout.flush()
     curr_item = ""
     index = 1
     last_index = len(items) -2
