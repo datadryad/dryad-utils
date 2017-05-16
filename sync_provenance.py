@@ -21,6 +21,7 @@ import urllib
 import urllib2
 import tempfile
 import subprocess
+from sql_utils import dict_from_query, rows_from_query
 
 # Global variables that are initialized farther down.
 
@@ -70,24 +71,6 @@ def printAnvlResponse (response, sortLines=False):
         response.insert(0, statusLine)
     for line in response:
         print line
-
-def dict_from_query(sql):
-    # Now execute it
-    cmd = "psql -A -U dryad_app dryad_repo -c \"%s\"" % sql
-    output = [line.strip().split('|') for line in os.popen(cmd).readlines()]
-    if len(output) <= 2: # the output should have at least 3 lines: header, body rows, number of rows
-        return None
-    else:
-        return dict(zip(output[0],output[1]))
-
-def rows_from_query(sql):
-    # Now execute it
-    cmd = "psql -A -U dryad_app dryad_repo -c \"%s\"" % sql
-    output = [line.strip().split('|') for line in os.popen(cmd).readlines()]
-    if len(output) <= 2: # the output should have at least 3 lines: header, body rows, number of rows
-        return None
-    else:
-        return output
 
 def get_field_id(name):
     parts = re.split('\.', name)

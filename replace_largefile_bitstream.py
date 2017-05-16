@@ -8,6 +8,7 @@ import sys
 import shutil
 import hashlib
 import mimetypes
+from sql_utils import dict_from_query
 
 ASSETSTORE_PATH = '/opt/dryad-data/assetstore/'
 
@@ -86,15 +87,6 @@ def place_largefile(bitstream_id, largefile):
         raise Exception("Unable to get write access on the destination path")
     print "Copying '%s' -> '%s'" % (largefile.path, destination_path)
     shutil.copyfile(largefile.path, destination_path)
-
-def dict_from_query(sql):
-    # Now execute it
-    cmd = "psql -A -U dryad_app dryad_repo -c \"%s\"" % sql
-    output = [line.strip().split('|') for line in os.popen(cmd).readlines()]
-    if len(output) <= 2: # the output should have at least 3 lines: header, body rows, number of rows
-        return None
-    else:
-        return dict(zip(output[0],output[1]))
 
 def query_bitstream_table(bitstream_id):
     '''

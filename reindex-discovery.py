@@ -9,37 +9,11 @@ import os
 from optparse import OptionParser
 from datetime import datetime, date, time
 from doi_tool import run_ezid
+from sql_utils import dict_from_query, rows_from_query, get_field_id
 
 # Global variables that are initialized farther down.
 _username = None
 _password = None
-
-def dict_from_query(sql):
-    # Now execute it
-    cmd = "psql -A -U dryad_app dryad_repo -c \"%s\"" % sql
-    output = [line.strip().split('|') for line in os.popen(cmd).readlines()]
-    if len(output) <= 2: # the output should have at least 3 lines: header, body rows, number of rows
-        return None
-    else:
-        return dict(zip(output[0],output[1]))
-
-def rows_from_query(sql):
-    # Now execute it
-    cmd = "psql -A -U dryad_app dryad_repo -c \"%s\"" % sql
-    output = [line.strip().split('|') for line in os.popen(cmd).readlines()]
-    if len(output) <= 2: # the output should have at least 3 lines: header, body rows, number of rows
-        return None
-    else:
-        return output
-
-def get_field_id(name):
-    parts = re.split('\.', name)
-    schema = dict_from_query("select metadata_schema_id from metadataschemaregistry where short_id = '%s'" % parts[0])['metadata_schema_id']
-    if len(parts) > 2:
-        field_id = dict_from_query("select metadata_field_id from metadatafieldregistry where metadata_schema_id=%s and element='%s' and qualifier = '%s'" % (schema, parts[1], parts[2]))['metadata_field_id']
-    else:
-        field_id = dict_from_query("select metadata_field_id from metadatafieldregistry where metadata_schema_id=%s and element='%s' and qualifier is null" % (schema, parts[1]))['metadata_field_id']
-    return field_id
     
 def reindex_item(item_id):
     cmd = "/opt/dryad/bin/dspace update-discovery-index -i %s" % str(item_id)
@@ -50,7 +24,7 @@ def reindex_item(item_id):
     
 def update_ezid(item_id):
     global _username, _password
-    doi_field_id = get_field_id('dc.identifier');
+    doi_field_id = get_field_id('dc.identifier')
     doi = dict_from_query("select text_value from metadatavalue where item_id = %s and metadata_field_id = %s;" % (item_id, doi_field_id))['text_value']
     if doi is not None:
         options = dict(doi=doi, is_blackout='False', action='update', username=_username, password=_password)
