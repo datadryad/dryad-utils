@@ -8,15 +8,7 @@ import re
 import os
 import sys
 import string
-
-def rows_from_query(sql):
-    # Now execute it
-    cmd = "psql -A -U dryad_app dryad_repo -c \"%s\"" % sql
-    output = [line.strip().split('|') for line in os.popen(cmd).readlines()]
-    if len(output) <= 2: # the output should have at least 3 lines: header, body rows, number of rows
-        return None
-    else:
-        return output[1:-1]
+from sql_utils import rows_from_query
 
 def update_authority(authority, metadata_value_id):
     new_authority = string.replace(authority, "will be generated::orcid::", "orcid:")
