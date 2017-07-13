@@ -6,37 +6,15 @@ __author__ = 'daisieh'
 
 import re
 import os
+import sys
 from optparse import OptionParser
 from datetime import datetime, date, time
+from doi_tool import run_ezid
+from sql_utils import dict_from_query, rows_from_query, get_field_id
 
 # Global variables that are initialized farther down.
-
-def dict_from_query(sql):
-    # Now execute it
-    cmd = "psql -A -U dryad_app dryad_repo -c \"%s\"" % sql
-    output = [line.strip().split('|') for line in os.popen(cmd).readlines()]
-    if len(output) <= 2: # the output should have at least 3 lines: header, body rows, number of rows
-        return None
-    else:
-        return dict(zip(output[0],output[1]))
-
-def rows_from_query(sql):
-    # Now execute it
-    cmd = "psql -A -U dryad_app dryad_repo -c \"%s\"" % sql
-    output = [line.strip().split('|') for line in os.popen(cmd).readlines()]
-    if len(output) <= 2: # the output should have at least 3 lines: header, body rows, number of rows
-        return None
-    else:
-        return output
-
-def get_field_id(name):
-    parts = re.split('\.', name)
-    schema = dict_from_query("select metadata_schema_id from metadataschemaregistry where short_id = '%s'" % parts[0])['metadata_schema_id']
-    if len(parts) > 2:
-        field_id = dict_from_query("select metadata_field_id from metadatafieldregistry where metadata_schema_id=%s and element='%s' and qualifier = '%s'" % (schema, parts[1], parts[2]))['metadata_field_id']
-    else:
-        field_id = dict_from_query("select metadata_field_id from metadatafieldregistry where metadata_schema_id=%s and element='%s' and qualifier is null" % (schema, parts[1]))['metadata_field_id']
-    return field_id
+_username = None
+_password = None
     
 def reindex_item(item_id):
     cmd = "/opt/dryad/bin/dspace update-discovery-index -i %s" % str(item_id)
@@ -44,14 +22,29 @@ def reindex_item(item_id):
     m = re.search('Wrote Item: (.*) to Index', result2.read())
     if m is not None:
         print m.group(1)
+    sys.stdout.flush()
     
+def update_ezid(item_id):
+    global _username, _password
+    doi_field_id = get_field_id('dc.identifier')
+    doi = dict_from_query("select text_value from metadatavalue where item_id = %s and metadata_field_id = %s;" % (item_id, doi_field_id))['text_value']
+    if doi is not None:
+        options = dict(doi=doi, is_blackout='False', action='update', username=_username, password=_password)
+        run_ezid(options)
+    sys.stdout.flush()
+
 def main():
     parser = OptionParser()
     parser.add_option("--date_from", dest="date_from", help="find items archived after this date")
     parser.add_option("--date_to", dest="date_to", help="find items archived before this date")
     parser.add_option("--item_from", dest="item_from", help="starting item_id for process")
     parser.add_option("--item_to", dest="item_to", help="ending item_id for process")
+    parser.add_option("--username", dest="username", help="EZID username")
+    parser.add_option("--password", dest="password", help="EZID password")
     (options, args) = parser.parse_args()
+    global _username, _password
+    _username = options.username
+    _password = options.password
     sql = "select item_id from item where owning_collection = 2 and in_archive = 't' order by item_id asc"    
     if options.date_from is not None or options.date_to is not None:
         if options.date_from is None:
@@ -78,6 +71,7 @@ def main():
     items = rows_from_query (sql)
     labels = dict(zip(items[0], range(0,len(items[0]))))
     print "%d items to index" % (len(items) -2)
+    sys.stdout.flush()
     curr_item = ""
     index = 1
     last_index = len(items) -2
@@ -89,6 +83,7 @@ def main():
         print "%d of %d: indexing %s:" % (index, last_index, item_id)
         index = index + 1
         reindex_item(item_id)
+        update_ezid(item_id)
     print "DONE"
 if __name__ == '__main__':
     main()

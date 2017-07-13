@@ -10,31 +10,8 @@ import sys
 import shutil
 import hashlib
 from time import strptime, strftime
+from sql_utils import dict_from_query, var_from_query, rows_from_query
 # import datetime
-
-def dict_from_query(sql):
-    # Now execute it
-    cmd = "psql -A -U dryad_app dryad_repo -c \"%s\"" % sql
-    output = [line.strip().split('|') for line in os.popen(cmd).readlines()]
-    if len(output) <= 2: # the output should have at least 3 lines: header, body rows, number of rows
-        return None
-    else:
-        return dict(zip(output[0],output[1]))
-        
-def var_from_query(sql, param):
-    dict = dict_from_query(sql)
-    if dict is not None:
-        return dict[param]
-    return None
-
-def rows_from_query(sql):
-    # Now execute it
-    cmd = "psql -A -U dryad_app dryad_repo -c \"%s\"" % sql
-    output = [line.strip().split('|') for line in os.popen(cmd).readlines()]
-    if len(output) <= 2: # the output should have at least 3 lines: header, body rows, number of rows
-        return None
-    else:
-        return output
 
 def update_sponsor_id(name, item_id):
     sql = "update shoppingcart set sponsor_id = %s where journal='%s'" % (item_id, name)
