@@ -8,7 +8,6 @@ import re
 import os
 
 def dict_from_query(sql):
-    # Now execute it
     cmd = "psql -A -U dryad_app dryad_repo -c \"%s\"" % sql
     output = [line.strip().split('|') for line in os.popen(cmd).readlines()]
     if len(output) <= 2: # the output should have at least 3 lines: header, body rows, number of rows
@@ -65,3 +64,9 @@ def var_from_query(sql, param):
     if dict is not None:
         return dict[param]
     return None
+
+def execute_sql_query(sql):
+    cmd = "psql -A -U dryad_app dryad_repo -c \"%s\"" % sql
+    output = os.popen(cmd).readlines()
+    for line in output:
+    	print line
