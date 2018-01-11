@@ -10,7 +10,7 @@ import hashlib
 ## Make sure you've set the FTP_BUCKET environment variable.
 
 TRANSFER_PATH = '/dryad-data/transfer-complete/'
-FTP_BUCKET = os.environ('FTP_BUCKET')
+FTP_BUCKET = os.environ['FTP_BUCKET']
 
 def main():
     cmd = 'aws s3 ls s3://%s/ --recursive' % (FTP_BUCKET)
