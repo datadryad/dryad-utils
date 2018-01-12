@@ -4,6 +4,7 @@
 
 if [ ! -e ~/transfer_lock ];
 then
+	date
 	echo "transferring"
 	touch ~/transfer_lock
 	echo "rsyncing"
