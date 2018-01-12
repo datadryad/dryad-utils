@@ -11,7 +11,9 @@ then
 	find /dryad-data/transfer -mindepth 2 -mmin +180 -exec rm -rf {} \;
 	echo "aws sync"
 	/usr/local/bin/aws s3 sync /dryad-data/transfer-complete/ s3://dryad-ftp/ --delete
+	echo "adding md5 tags"
 	python ~/dryad-utils/transfer_s3.py
+	echo "done"
 	rm ~/transfer_lock
 fi
 chmod -R 777 /dryad-data/transfer-complete/
