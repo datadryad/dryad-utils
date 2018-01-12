@@ -12,7 +12,7 @@ then
 	echo "aws sync"
 	/usr/local/bin/aws s3 sync /dryad-data/transfer-complete/ s3://dryad-ftp/ --delete
 	echo "adding md5 tags"
-	python ~/dryad-utils/transfer_s3.py
+	/usr/bin/python ~/dryad-utils/transfer_s3.py
 	echo "done"
 	rm ~/transfer_lock
 fi
