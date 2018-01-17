@@ -126,6 +126,8 @@ def main():
 
     largefile = None
     try:
+        print "Checking existence of dummy file..."
+        dummyfile = bitstream_file(get_object_key(bitstream_id), ASSETSTORE_BUCKET)
         largefile = bitstream_file(largefile_key, FTP_BUCKET)
     except BaseException as e:
         print "Unable to read file: %s" % e
