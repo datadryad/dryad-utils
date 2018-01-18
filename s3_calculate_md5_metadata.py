@@ -35,10 +35,12 @@ def main():
                         hash.update(chunk)
                 md5 = hash.hexdigest()
                 os.remove(local_path)
-                cmd = '/usr/local/bin/aws s3 cp "s3://%s/%s" "s3://%s/%s" --metadata md5=%s' % (bucket, key, bucket, key, md5)
-
+                cmd = 'aws s3 cp "s3://%s/%s" "s3://%s/%s" --metadata md5=%s' % (bucket, key, bucket, key, md5)
                 os.popen(cmd)
                 print "  added md5 tag of %s" % (md5)
+            else:
+                cmd = 'aws s3 cp "s3://%s/%s" "s3://%s/%s" --metadata md5=%s' % (bucket, key, bucket, key, md5)
+                os.popen(cmd)
         else:
             print "  md5 tag is %s" % (metadata['Metadata']['md5'])
     sys.stdout.flush()            
