@@ -38,7 +38,13 @@ class bitstream_file(object):
         self.size = metadata['ContentLength']
         self.name = os.path.basename(self.s3key)
         self.mimetype = metadata['ContentType']
-        self.md5 = metadata['Metadata']['md5']
+        if 'md5' in metadata['Metadata']:
+            self.md5 = metadata['Metadata']['md5']
+        else:
+            self.md5 = metadata['ETag']
+            if '-' in self.md5:
+                print "Can't find MD5"
+                exit(1)
     def __unicode__(self):
         return u'Name: %s, Size: %d, MD5: %s, Mime-Type: %s' % (self.name, self.size, self.md5, self.mimetype)
 
@@ -126,7 +132,7 @@ def main():
 
     largefile = None
     try:
-        print "Checking existence of dummy file..."
+        print "Checking existence of dummy file %s..." % (get_object_key(bitstream_id))
         dummyfile = bitstream_file(get_object_key(bitstream_id), ASSETSTORE_BUCKET)
         largefile = bitstream_file(largefile_key, FTP_BUCKET)
     except BaseException as e:
