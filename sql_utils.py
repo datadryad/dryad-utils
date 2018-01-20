@@ -7,9 +7,22 @@ __author__ = 'daisieh'
 import re
 import os
 
+global DRYAD_DB
+
+if 'DRYAD_DB_HOST' in os.environ:
+	DRYAD_DB = os.environ['DRYAD_DB_HOST']
+else:
+	DRYAD_DB = ""	
+
+def sql_query(sql):
+	global DRYAD_DB
+	host = ""
+	if DRYAD_DB is not "":
+		host = "--host " + DRYAD_DB
+	return os.popen("psql %s -A -U dryad_app dryad_repo -c \"%s\"" % (host, sql))
+
 def dict_from_query(sql):
-    cmd = "psql -A -U dryad_app dryad_repo -c \"%s\"" % sql
-    output = [line.strip().split('|') for line in os.popen(cmd).readlines()]
+    output = [line.strip().split('|') for line in sql_query(sql).readlines()]
     if len(output) <= 2: # the output should have at least 3 lines: header, body rows, number of rows
         return None
     else:
@@ -17,9 +30,7 @@ def dict_from_query(sql):
         return result
         
 def list_from_query(sql):
-    # Now execute it
-    cmd = "psql -A -U dryad_app dryad_repo -c \"%s\"" % sql
-    output = [line.strip().split('|') for line in os.popen(cmd).readlines()]
+    output = [line.strip().split('|') for line in sql_query(sql).readlines()]
     if len(output) == 1:
         return None
     else:
@@ -51,9 +62,7 @@ def list_values_for_key(key,dict_list):
     return result
 
 def rows_from_query(sql):
-    # Now execute it
-    cmd = "psql -A -U dryad_app dryad_repo -c \"%s\"" % sql
-    output = [line.strip().split('|') for line in os.popen(cmd).readlines()]
+    output = [line.strip().split('|') for line in sql_query(sql).readlines()]
     if len(output) <= 2: # the output should have at least 3 lines: header, body rows, number of rows
         return None
     else:
@@ -66,7 +75,6 @@ def var_from_query(sql, param):
     return None
 
 def execute_sql_query(sql):
-    cmd = "psql -A -U dryad_app dryad_repo -c \"%s\"" % sql
-    output = os.popen(cmd).readlines()
+    output = sql_query(sql).readlines()
     for line in output:
     	print line
