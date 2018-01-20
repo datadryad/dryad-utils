@@ -10,7 +10,7 @@ import re
 import os
 import sys
 import json
-from sql_utils import dict_from_query
+from sql_utils import dict_from_query, sql_query
 
 FTP_BUCKET = "dryad-ftp"
 ASSETSTORE_BUCKET = os.environ['ASSETSTORE_BUCKET']
@@ -115,8 +115,7 @@ def update_bitstream_table(bitstream_id, large_file):
         bitstream_id
     )
     print "Executing SQL: %s" % sql
-    cmd = "psql -U dryad_app dryad_repo -c \"%s\"" % sql
-    print os.popen(cmd).read()
+    print sql_query(sql).read()
 
 
 def main():

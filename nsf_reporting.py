@@ -10,13 +10,12 @@ import sys
 import shutil
 import hashlib
 from time import strptime, strftime
-from sql_utils import dict_from_query, var_from_query, rows_from_query
+from sql_utils import dict_from_query, var_from_query, rows_from_query, sql_query
 # import datetime
 
 def update_sponsor_id(name, item_id):
     sql = "update shoppingcart set sponsor_id = %s where journal='%s'" % (item_id, name)
-    cmd = "psql -U dryad_app dryad_repo -c \"%s\"" % sql
-    print os.popen(cmd).read()
+    print sql_query(sql).read()
 
 def get_field_id(name):
     parts = re.split('\.', name)
