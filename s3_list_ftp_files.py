@@ -5,8 +5,6 @@ __author__ = 'daisie'
 import os
 import re
 
-TRANSFER_PATH = '/dryad-data/transfer-complete/'
-
 def main():
     cmd = 'aws s3 ls s3://dryad-ftp/ --recursive'
     results = list(os.popen(cmd))
