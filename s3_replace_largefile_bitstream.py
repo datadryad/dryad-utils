@@ -106,7 +106,7 @@ def update_bitstream_table(bitstream_id, large_file):
         format_id = 1
     else:
         format_id = format_dict['bitstream_format_id'] # stays a string
-    sql = "UPDATE bitstream set size_bytes=%d, name='%s', source='%s' ,checksum='%s', bitstream_format_id=%s where bitstream_id = %d" % (
+    sql = "UPDATE bitstream set store_number=1, size_bytes=%d, name='%s', source='%s' ,checksum='%s', bitstream_format_id=%s where bitstream_id = %d" % (
         large_file.size,
         large_file.name,
         large_file.name,
@@ -134,6 +134,7 @@ def main():
     try:
         print "Checking existence of dummy file %s..." % (get_object_key(bitstream_id))
         dummyfile = bitstream_file(get_object_key(bitstream_id), ASSETSTORE_BUCKET)
+        print "Checking existence of large file %s..." % (largefile_key)
         largefile = bitstream_file(largefile_key, FTP_BUCKET)
     except BaseException as e:
         print "Unable to read file: %s" % e
