@@ -31,11 +31,17 @@ def main():
         print "Copying %s to s3..." % (internal_id)
         cmd = 'aws s3 cp "%s" "s3://%s/%s" --metadata md5=%s --expected-size=%s' % (get_assetstore_path(internal_id), ASSETSTORE_BUCKET, internal_id, md5, size)
         if (os.popen(cmd).close() is None):
-            print "Updating database..."
-            print sql_query("update bitstream set store_number=1 where bitstream_id=%s" % (bitstream_id)).read()
+            print "Verifying file size and md5..."
+            cmd = 'aws s3api head-object --bucket %s --key "%s"' % (ASSETSTORE_BUCKET, internal_id)
+            metadata = json.load(os.popen(cmd))
+            if (long(size) != long(metadata['ContentLength'])) and (md5 is not metadata['Metadata']['md5']):
+                print "S3 copy does not match local copy, skipping database update."
+            else:
+                print "Updating database..."
+                print sql_query("update bitstream set store_number=1 where bitstream_id=%s" % (bitstream_id)).read()
         else:
             print "AWS copy error, exiting"
-            exit(0)
+            exit(1)
         
         sys.stdout.flush()
     
