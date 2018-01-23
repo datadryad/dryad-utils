@@ -23,8 +23,9 @@ def validate_s3_file(bitstream):
     result = os.popen(cmd).read()
     if (result != ""):
         metadata = json.loads(result)
-        if (long(bitstream['size_bytes']) == long(metadata['ContentLength'])) and (bitstream['checksum'] == metadata['Metadata']['md5']):
-            return True
+        if ('md5' is in metadata['Metadata']):
+            if (long(bitstream['size_bytes']) == long(metadata['ContentLength'])) and (bitstream['checksum'] == metadata['Metadata']['md5']):
+                return True
     return False
     
 def update_database(bitstream_id):
