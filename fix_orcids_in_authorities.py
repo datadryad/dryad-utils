@@ -8,14 +8,12 @@ import re
 import os
 import sys
 import string
-from sql_utils import rows_from_query
+from sql_utils import rows_from_query, sql_query
 
 def update_authority(authority, metadata_value_id):
     new_authority = string.replace(authority, "will be generated::orcid::", "orcid:")
     sql = "update metadatavalue set authority = \'%s\' where metadata_value_id = %s" % (new_authority, metadata_value_id)
-    cmd = "psql -A -U dryad_app dryad_repo -c \"%s\"" % sql
-    print cmd
-    return os.popen(cmd)
+    return sql_query(sql)
         
 
 def main():

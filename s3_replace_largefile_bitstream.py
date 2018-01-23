@@ -10,7 +10,7 @@ import re
 import os
 import sys
 import json
-from sql_utils import dict_from_query
+from sql_utils import dict_from_query, sql_query
 
 FTP_BUCKET = "dryad-ftp"
 ASSETSTORE_BUCKET = os.environ['ASSETSTORE_BUCKET']
@@ -38,7 +38,13 @@ class bitstream_file(object):
         self.size = metadata['ContentLength']
         self.name = os.path.basename(self.s3key)
         self.mimetype = metadata['ContentType']
-        self.md5 = metadata['Metadata']['md5']
+        if 'md5' in metadata['Metadata']:
+            self.md5 = metadata['Metadata']['md5']
+        else:
+            self.md5 = metadata['ETag']
+            if '-' in self.md5:
+                print "Can't find MD5"
+                exit(1)
     def __unicode__(self):
         return u'Name: %s, Size: %d, MD5: %s, Mime-Type: %s' % (self.name, self.size, self.md5, self.mimetype)
 
@@ -100,7 +106,7 @@ def update_bitstream_table(bitstream_id, large_file):
         format_id = 1
     else:
         format_id = format_dict['bitstream_format_id'] # stays a string
-    sql = "UPDATE bitstream set size_bytes=%d, name='%s', source='%s' ,checksum='%s', bitstream_format_id=%s where bitstream_id = %d" % (
+    sql = "UPDATE bitstream set store_number=1, size_bytes=%d, name='%s', source='%s' ,checksum='%s', bitstream_format_id=%s where bitstream_id = %d" % (
         large_file.size,
         large_file.name,
         large_file.name,
@@ -109,8 +115,7 @@ def update_bitstream_table(bitstream_id, large_file):
         bitstream_id
     )
     print "Executing SQL: %s" % sql
-    cmd = "psql -U dryad_app dryad_repo -c \"%s\"" % sql
-    print os.popen(cmd).read()
+    print sql_query(sql).read()
 
 
 def main():
@@ -126,8 +131,9 @@ def main():
 
     largefile = None
     try:
-        print "Checking existence of dummy file..."
+        print "Checking existence of dummy file %s..." % (get_object_key(bitstream_id))
         dummyfile = bitstream_file(get_object_key(bitstream_id), ASSETSTORE_BUCKET)
+        print "Checking existence of large file %s..." % (largefile_key)
         largefile = bitstream_file(largefile_key, FTP_BUCKET)
     except BaseException as e:
         print "Unable to read file: %s" % e
