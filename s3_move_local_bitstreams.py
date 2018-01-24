@@ -33,8 +33,13 @@ def update_database(bitstream_id):
     print sql_query("update bitstream set store_number=1 where bitstream_id=%s" % (bitstream_id)).read()
 
 def main():
-    print "Gathering bitstreams..."
-    bitstreams = list_from_query("select bitstream_id, internal_id, checksum, size_bytes from bitstream where deleted=false and store_number=0 order by bitstream_id ASC")
+    if len(sys.argv) == 2:
+        bitstream_id = int(sys.argv[1])
+        bitstreams = list_from_query("select bitstream_id, internal_id, checksum, size_bytes from bitstream where bitstream_id=%s" % (bitstream_id))
+    else:
+        print "Gathering bitstreams..."
+        bitstreams = list_from_query("select bitstream_id, internal_id, checksum, size_bytes from bitstream where deleted=false and store_number=0 order by bitstream_id ASC")
+
     print "Processing %d local bitstreams" % (len(bitstreams))
 
     for bitstream in bitstreams:
