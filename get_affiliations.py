@@ -55,8 +55,19 @@ def find_funders(pub_json):
         if 'funder' in pub_json['message']:
             funders = pub_json['message']['funder']
             for funder in funders:
-                funder_awards = ','.join(funder['award'])
-                funder_list.append('\t'.join([funder['DOI'],funder['name'],funder_awards]))
+                if 'DOI' in funder:
+                    funder_doi = funder['DOI']
+                else:
+                    funder_doi = ''
+                if 'name' in funder:
+                    funder_name = funder['name']
+                else:
+                    funder_name = ''
+                if 'award' in funder:
+                    funder_awards = ','.join(funder['award'])
+                else:
+                    funder_awards = ''
+                funder_list.append('\t'.join([funder_doi,funder_name,funder_awards]))
     return funder_list
 
 def find_authors(pub_json):
