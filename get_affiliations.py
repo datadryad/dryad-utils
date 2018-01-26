@@ -41,11 +41,23 @@ def process_pub_doi(pub_doi_item):
         if r.status_code == 200:
             authors = find_authors(r.json())
             for author in authors:
-                row = [dryad_doi, title, pub_doi, author.encode('utf-8')]
                 print '%s\t%s\t%s\t%s' % (dryad_doi, title, pub_doi, author.encode('utf-8'))
+            funders = find_funders(r.json())
+            for funder in funders:
+                print '%s\t%s\t%s\t\t\t\t%s' % (dryad_doi, title, pub_doi, funder.encode('utf-8'))
         else:
             print "no result for %s: %s" % (pub_doi, r.status_code)
     sys.stdout.flush()
+    
+def find_funders(pub_json):
+    funder_list = []
+    if 'message' in pub_json:
+        if 'funder' in pub_json['message']:
+            funders = pub_json['message']['funder']
+            for funder in funders:
+                funder_awards = ','.join(funder['award'])
+                funder_list.append('\t'.join([funder['DOI'],funder['name'],funder_awards))
+    return funder_list
 
 def find_authors(pub_json):
     author_list = []
