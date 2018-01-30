@@ -54,6 +54,7 @@ def main():
             update_database(bitstream_id)
         else:
             print "Copying %s to s3..." % (internal_id)
+            sys.stdout.flush()
             cmd = 'aws s3 cp "%s" "s3://%s/%s" --metadata md5=%s --expected-size=%s' % (get_assetstore_path(internal_id), ASSETSTORE_BUCKET, internal_id, md5, size)
             if (os.popen(cmd).close() is None):
                 print "Verifying file size and md5 of %s..." % (internal_id)
