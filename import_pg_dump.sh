@@ -16,7 +16,16 @@ if [[ ! -f "$DUMPFILE" ]]; then
     exit 1
 fi
 
-dropdb dryad_repo
-createdb -U dryad_app -E UNICODE dryad_repo
-pg_restore -j $THREADS -d dryad_repo -U dryad_app $DUMPFILE 
+if [[ "$DRYAD_DB_HOST" == "" ]]; then
+	psql -U dryad_app -d dryad_repo -c "select pg_terminate_backend(pid) from pg_stat_activity where datname='dryad_repo'"
+	dropdb dryad_repo
+	createdb -U dryad_app -E UNICODE dryad_repo
+	pg_restore -j $THREADS -d dryad_repo -U dryad_app $DUMPFILE 
+fi
 
+if [[ "$DRYAD_DB_HOST" != "" ]]; then
+	psql --host $DRYAD_DB_HOST -U dryad_app -d dryad_repo -c "select pg_terminate_backend(pid) from pg_stat_activity where datname='dryad_repo'"
+	dropdb --host $DRYAD_DB_HOST dryad_repo
+	createdb --host $DRYAD_DB_HOST -U dryad_app -E UNICODE dryad_repo
+	pg_restore --host $DRYAD_DB_HOST -j $THREADS -d dryad_repo -U dryad_app $DUMPFILE 
+fi
