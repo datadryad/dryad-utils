@@ -31,21 +31,46 @@ def main():
 def process_pub_doi(pub_doi_item):
     dryad_doi_field = get_field_id('dc.identifier')
     title_field = get_field_id('dc.title')
+    pub_name_field = get_field_id('prism.publicationName')
     m = re.search('^doi:(.+)', pub_doi_item[0])
     if m is not None:
         pub_doi = m.group(0)
         item_id = pub_doi_item[1]
         dryad_doi = var_from_query('select text_value from metadatavalue where item_id = %s and metadata_field_id = %s' % (item_id, dryad_doi_field), 'text_value')
         title = var_from_query('select text_value from metadatavalue where item_id = %s and metadata_field_id = %s' % (item_id, title_field), 'text_value')
+        pub_name = var_from_query('select text_value from metadatavalue where item_id = %s and metadata_field_id = %s' % (item_id, pub_name_field), 'text_value')
         r = requests.get('http://api.crossref.org/works/%s' % pub_doi)
         if r.status_code == 200:
             authors = find_authors(r.json())
             for author in authors:
-                row = [dryad_doi, title, pub_doi, author.encode('utf-8')]
-                print '%s\t%s\t%s\t%s' % (dryad_doi, title, pub_doi, author.encode('utf-8'))
+                print '%s\t%s\t%s\t%s\t%s' % (dryad_doi, title, pub_doi, pub_name, author.encode('utf-8'))
+            funders = find_funders(r.json())
+            for funder in funders:
+                print '%s\t%s\t%s\t%s\t\t\t\t%s' % (dryad_doi, title, pub_doi, pub_name, funder.encode('utf-8'))
         else:
             print "no result for %s: %s" % (pub_doi, r.status_code)
     sys.stdout.flush()
+    
+def find_funders(pub_json):
+    funder_list = []
+    if 'message' in pub_json:
+        if 'funder' in pub_json['message']:
+            funders = pub_json['message']['funder']
+            for funder in funders:
+                if 'DOI' in funder:
+                    funder_doi = funder['DOI']
+                else:
+                    funder_doi = ''
+                if 'name' in funder:
+                    funder_name = funder['name']
+                else:
+                    funder_name = ''
+                if 'award' in funder:
+                    funder_awards = ','.join(funder['award'])
+                else:
+                    funder_awards = ''
+                funder_list.append('\t'.join([funder_doi,funder_name,funder_awards]))
+    return funder_list
 
 def find_authors(pub_json):
     author_list = []
