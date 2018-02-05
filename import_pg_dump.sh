@@ -6,7 +6,7 @@ DBHOST=$2
 THREADS=4   # number of threads to spawn for update
 
 if [[ "$DUMPFILE" == "" ]]; then
-    echo "usage: importdb.sh DUMP_FILE"
+    echo "usage: importdb.sh DUMP_FILE DBHOST"
     echo "Exiting."
     exit 1;
 fi
@@ -19,8 +19,6 @@ fi
 
 if [[ "$DBHOST" == "" ]]; then
 	DBHOST=$DRYAD_DB_HOST
-    echo "Exiting."
-    exit 1;
 fi
 
 if [[ "$DBHOST" == "" ]]; then
