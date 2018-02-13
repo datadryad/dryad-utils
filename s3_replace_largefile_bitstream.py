@@ -62,6 +62,7 @@ def rename_object(bitstream_id, largefile):
     destination_key = get_object_key(bitstream_id)
     print "Copying '%s' -> '%s'" % (largefile.s3key, destination_key)
     cmd = 'aws s3 cp "s3://%s/%s" "s3://%s/%s" --metadata md5=%s' % (FTP_BUCKET, largefile.s3key, ASSETSTORE_BUCKET, destination_key, largefile.md5)
+    print cmd
     os.popen(cmd)
 
 def query_bitstream_table(bitstream_id):
@@ -90,6 +91,7 @@ def verify_file(bitstream_id):
         print "No file found for bitstream_id %d" % bitstream_id
         return False
     file = bitstream_file(file_dict['internal_id'], ASSETSTORE_BUCKET)
+    print "Verifying file %s...size %s, md5 %s" % (file.name, file.size, file.md5)
     # size
     if int(file_dict['size_bytes']) != file.size:
         print "Size mismatch: %d / %d" % (int(file_dict['size_bytes']), file.size)
@@ -133,8 +135,10 @@ def main():
     try:
         print "Checking existence of dummy file %s..." % (get_object_key(bitstream_id))
         dummyfile = bitstream_file(get_object_key(bitstream_id), ASSETSTORE_BUCKET)
+        print "...dummy file is %s bytes, checksum %s" % (dummyfile.size, dummyfile.md5)
         print "Checking existence of large file %s..." % (largefile_key)
         largefile = bitstream_file(largefile_key, FTP_BUCKET)
+        print "...large file is %s bytes, checksum %s" % (largefile.size, largefile.md5)
     except BaseException as e:
         print "Unable to read file: %s" % e
         exit(-1)
