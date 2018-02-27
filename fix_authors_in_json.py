@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# fix errors in database
+# fix_authors_in_json.py was a one-time script to fix problems in json_data for manuscripts.
 
 __author__ = 'daisieh'
 
