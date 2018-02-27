@@ -5,3 +5,5 @@ embargo_report.csv
 *.csv
 
 dryad_credentials.py
+
+*.pyc
