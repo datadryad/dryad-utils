@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# This is a generic version of Ryan's flip/flop scripts for secundus, but isn't really used anymore.
+
 # Allows the secundus database to alternate between two on-demand
 # Amazon RDS machines, flip and flop. 
 
