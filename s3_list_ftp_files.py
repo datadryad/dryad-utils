@@ -10,7 +10,7 @@ def main():
     results = list(os.popen(cmd))
     for file in results:
         parts = re.split('\s+', file, 3)
-        if (re.match("^\.", parts[3]) is None):
+        if (re.match("^\.", parts[3]) is None) and (re.match("retracted-files", parts[3]) is None):
             print parts[3].rstrip()
 
 if __name__ == '__main__':
