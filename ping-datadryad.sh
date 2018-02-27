@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# Checks to see if datadryad.org still points at the specified host. Takes an optional second argument for the port number.
+
 if [ -z "$1" ]
   then
   HOST_TO_QUERY=$HOSTNAME
