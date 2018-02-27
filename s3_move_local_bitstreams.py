@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Move bitstreams from local assetstore to S3 bucket
+# Move bitstreams from local assetstore to S3 bucket. If a single internal ID is provided, just moves that one bitstream to S3.
 
 __author__ = 'daisie'
 
