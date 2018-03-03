@@ -11,7 +11,6 @@ Creates PNG images at 100x130 and a 160x200 of a journal cover image file passed
 
  Requires pillow (up-to-date version of PIL)
 
-The files are placed into the appropriate subdirectories of dryad-repo, so change DRYAD_REPO_ROOT if you're not me.
 
 """
 import sys
@@ -22,18 +21,16 @@ except ImportError as e:
     sys.exit(1)
 from os.path import basename, splitext, normpath, expanduser
 import argparse
+import tempfile
+import os
 
 __author__ = 'dan.leehr@nescent.org'
 
 
-FRONT_COVER_DIMS = (100, 130)
 PKG_COVER_DIMS = (160, 200)
 
-DRYAD_REPO_ROOT =  "/Users/dan/Code/dryad-repo"
-
 class CoverGenerator(object):
-    def __init__(self, repo_root, filename):
-        self.repo_root = repo_root
+    def __init__(self, filename):
         self.filename = filename
         self.base = splitext(basename(filename))[0]
         self.image = None
@@ -42,25 +39,14 @@ class CoverGenerator(object):
         self.output_filename = None
         self.bgcolor = "rgba(255,255,255,255)"
 
-    def front_output_dir(self):
-        return normpath(self.repo_root + "/dspace/modules/xmlui/src/main/webapp/themes/Mirage/images/")
-
-    def pkg_output_dir(self):
-        return normpath(self.repo_root + "/dspace/modules/xmlui/src/main/webapp/themes/Dryad/images/coverimages/")
-
     def read_image(self):
         if self.image is None:
             self.image = Image.open(self.filename)
         return
 
-    def generate_front_cover(self):
-        """ Generate a cover image sized for the dryad homepage """
-        self.read_image()
-        self.dims = FRONT_COVER_DIMS
-        return self.generate_cover()
-
     def generate_pkg_cover(self):
         """ Generate a cover image sized for the data package page """
+        self.read_image()
         self.dims = PKG_COVER_DIMS
         return self.generate_cover()
 
@@ -90,15 +76,13 @@ class CoverGenerator(object):
 
     def write_cover(self):
         self.resized.save(self.output_filename, "PNG")
-
-    def write_front_cover(self):
-        self.generate_front_cover()
-        self.output_filename = self.front_output_dir() + "/recentlyIntegrated-" + self.base + ".png"
-        self.write_cover()
+        cmd = 'aws s3 cp "%s" "s3://%s/coverimages/%s.png"' % (self.output_filename, "dryad-web-assets", self.base)
+        os.popen(cmd)
+        print "Image is uploaded to https://s3.amazonaws.com/dryad-web-assets/coverimages/%s.png" % (self.base)
 
     def write_pkg_cover(self):
         self.generate_pkg_cover()
-        self.output_filename = self.pkg_output_dir() + "/" + self.base + ".png"
+        self.output_filename = tempfile.mkstemp()[1]
         self.write_cover()
 
 class DefaultHelpParser(argparse.ArgumentParser):
@@ -107,24 +91,22 @@ class DefaultHelpParser(argparse.ArgumentParser):
         self.print_help()
         sys.exit(2)
 
-def generate_covers(repo_root, filename, color=None):
-    generator = CoverGenerator(expanduser(repo_root), expanduser(filename))
+def generate_covers(filename, color=None):
+    generator = CoverGenerator(expanduser(filename))
     if color is not None:
         generator.bgcolor = color
-    generator.write_front_cover()
     generator.write_pkg_cover()
 
 def main():
     parser = DefaultHelpParser(
-        description='Resize journal cover images and place in your local Dryad codebase',
+        description='Resize journal cover images and upload to S3 at dryad-web-assets',
         epilog='Images can be in any format supported by pillow (JPEG/PNG/GIF/etc). Images will be sized to fit 100x130 and 160x200 and placed into the appropriate subdirectories within a Dryad git working copy.\nImage aspect ratios will be preserved, and borders will be filled with white (unless other color is specified)',
         add_help=True,
         formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument('repo_root', metavar='/path/to/dryad-repo', type=str)
     parser.add_argument('filename', metavar='image-filename.png', type=str)
     parser.add_argument('--color', '-c',  metavar='"rgba(\'255,255,255,255)\'',type=str)
     args = vars(parser.parse_args())
-    generate_covers(args['repo_root'], args['filename'], args['color'])
+    generate_covers(args['filename'], args['color'])
 
 if __name__ == '__main__':
     main()
