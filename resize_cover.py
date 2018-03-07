@@ -5,9 +5,11 @@
 resize_cover.py
 ~~~~~~~~~~~~
 
-Creates PNG images at 100x130 and a 160x200 of a journal cover image file passed as the first argument.
- The generated images maintain the original aspect ratio, and use a white background by default.  To use
- a different background color, specify it as the second argument.
+Creates a PNG image at 160x200 of a journal cover image file passed as the first argument.
+ The generated image maintains the original aspect ratio, and use a white background by default.  To use
+ a different background color, specify it as the second argument. 
+ 
+ The image is uploaded to the dryad-web-assets S3 bucket.
 
  Requires pillow (up-to-date version of PIL)
 
