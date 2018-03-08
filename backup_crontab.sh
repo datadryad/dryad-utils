@@ -2,7 +2,7 @@
 
 INSTANCE_NAME=$1
 
-crontab -l | diff - /home/ubuntu/crontab.txt
+crontab -l | diff - /home/ubuntu/crontab.txt &>/dev/null
 
 if [[ $? -ne 0 ]]; then
 	crontab -l > /home/ubuntu/crontab.txt
