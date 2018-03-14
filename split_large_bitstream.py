@@ -3,6 +3,7 @@
 ## This script downloads a bitstream from the assetstore, splits it into pieces, and 
 ## uploads the pieces to accessible URLs. 
 ## Make sure you've set the ASSETSTORE_BUCKET environment variable in your account.
+## Optional arguments are a bitstream ID and the number of chunks to split into.
 
 __author__ = 'daisie'
 

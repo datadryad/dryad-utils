@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 ## This script removes files associated with a bitstream ID from the temporary web store.
+## Optional argument takes a bitstream ID.
 
 __author__ = 'daisie'
 
@@ -28,7 +29,7 @@ def get_bitstream_id():
 
 def main():
     bitstream_id = None
-    if len(sys.argv) == 3:
+    if len(sys.argv) == 2:
         bitstream_id = int(sys.argv[1])
     else:
         bitstream_id = get_bitstream_id()
