@@ -33,7 +33,7 @@ def main():
     else:
         bitstream_id = get_bitstream_id()
 
-    print "Checking existence of file"
+    print "Deleting parts of bitstream %s from temporary store" % (bitstream_id)
     cmd = 'aws s3 rm "s3://%s" --recursive --exclude "*" --include "%s.*"' % (WEB_ASSETS_BUCKET, bitstream_id)
     subprocess.call(cmd, stdout=sys.stdout, stderr=sys.stderr, shell=True)
     
