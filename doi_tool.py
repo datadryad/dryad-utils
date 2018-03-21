@@ -59,8 +59,10 @@ def run_ezid(options):
     
     # add target:
     args.append('_target')
-    doi_path = 'http://datadryad.org/resource/%s/mets.xml' % (doi)
-    target_url = 'http://datadryad.org/resource/%s' % (doi)
+    target_url = 'https://datadryad.org/resource/%s' % (doi)
+    
+    mets_file = tempfile.NamedTemporaryFile(delete=False)
+    urllib.urlretrieve('https://datadryad.org/resource/%s/mets.xml' % (doi), mets_file.name)
     
     crosswalk_file = tempfile.NamedTemporaryFile(delete=False)
     if options['is_blackout'] is True:
@@ -83,6 +85,7 @@ def run_ezid(options):
     process(args)
     os.remove(f.name)
     os.remove(crosswalk_file.name)
+    os.remove(mets_file.name)
 
 if __name__ == '__main__':
     main()
