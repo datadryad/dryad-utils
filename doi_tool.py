@@ -10,6 +10,7 @@ import subprocess
 import sys
 import shlex
 import tempfile
+import urllib
 from optparse import OptionParser
 
 from ezid import process
@@ -61,11 +62,14 @@ def run_ezid(options):
     doi_path = 'http://datadryad.org/resource/%s/mets.xml' % (doi)
     target_url = 'http://datadryad.org/resource/%s' % (doi)
     
+    crosswalk_file = tempfile.NamedTemporaryFile(delete=False)
     if options['is_blackout'] is True:
-        cmd = 'xsltproc /opt/dryad/config/crosswalks/DIM2DATACITE-BLACKOUT.xsl %s' % doi_path
+        urllib.urlretrieve('https://raw.githubusercontent.com/datadryad/dryad-repo/dryad-master/dspace/config/crosswalks/DIM2DATACITE-BLACKOUT.xsl', crosswalk_file.name)
+        cmd = 'xsltproc %s %s' % (crosswalk_file.name, mets_file.name)
         target_url = 'http://datadryad.org/publicationBlackout'
     else:   
-        cmd = 'xsltproc /opt/dryad/config/crosswalks/DIM2DATACITE.xsl %s' % doi_path
+        urllib.urlretrieve('https://raw.githubusercontent.com/datadryad/dryad-repo/dryad-master/dspace/config/crosswalks/DIM2DATACITE.xsl', crosswalk_file.name)
+        cmd = 'xsltproc %s %s' % (crosswalk_file.name, mets_file.name)
     f = tempfile.NamedTemporaryFile(delete=False)
     subprocess.Popen(shlex.split(cmd), stdout=f).communicate()
 
@@ -78,6 +82,7 @@ def run_ezid(options):
 #     ['create', 'doi:10.5061/DRYAD.8157N', '_target', 'http://datadryad.org/resource/doi:10.5061/dryad.8157n', 'datacite', '@/Users/daisie/Desktop/test.xml']
     process(args)
     os.remove(f.name)
+    os.remove(crosswalk_file.name)
 
 if __name__ == '__main__':
     main()
