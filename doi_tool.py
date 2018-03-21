@@ -26,6 +26,11 @@ def main():
     parser.add_option("--password", dest="password", help="EZID password")
     (options, args) = parser.parse_args()
     opt_array = dict(doi=options.doi, is_blackout=options.is_blackout, action=options.action, username=options.username, password=options.password)
+    try:
+        s = subprocess.check_output(['which', 'xsltproc'])
+    except subprocess.CalledProcessError as e:
+        print "xsltproc is not installed. Please install using apt-get install xsltproc or similar."
+        return
     run_ezid(opt_array)
     
 def run_ezid(options):
