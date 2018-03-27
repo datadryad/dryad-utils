@@ -8,28 +8,15 @@
 #
 # fix_tasklistitems.py doi:10.5061/dryad.xxxxx
 #
-# It connects to the Postgres database with parameters specified in dryad_credentials.py.
-# This script does not exist in the repo, you should create it:
-#
-# credentials = {
-#  'user': 'username',
-#  'password': 'password',
-#  'host': '127.0.0.1',
-#  'port': 6543,
-#  'database': 'database',
-#  }
-#
-# To use this with a remote server, create an SSH tunnel, e.g.:
-# ssh -L 6543:127.0.0.1:5432 username@host.com
+# It connects to the Postgres database with parameters specified in environment variables:
+# PGPASSWORD and DRYAD_DB_HOST should already be defined.
 
 from sqlalchemy import Table, MetaData, create_engine
 import sys, copy
 import os
-from dryad_credentials import credentials
 
 def get_engine():
-  connection_string = "postgresql://%s:%s@%s:%d/%s" % (credentials['user'], credentials['password'], credentials['host'], credentials['port'], credentials['database'])
-  print 'connecting to %s' % credentials['host']
+  connection_string = "postgresql://%s:%s@%s:%d/%s" % ('dryad_app', os.environ['PGPASSWORD'], os.environ['DRYAD_DB_HOST'], 5432, 'dryad_repo')
   engine = create_engine(connection_string)
   return engine
 
