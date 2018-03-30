@@ -17,7 +17,7 @@ DRYAD_DB_HOST = FULL_DRYAD_DB_HOST.split('.')[0]
 HOST_SUFFIX = '.co33oyzjqasf.us-east-1.rds.amazonaws.com' # this is always the same for Dryad at us-east-1
 
 def db_status(db_name):
-    result = os.popen('aws rds describe-db-instances --db-instance-identifier %s' % (db_name)).read()
+    result = os.popen('/home/ubuntu/.local/bin/aws rds describe-db-instances --db-instance-identifier %s' % (db_name)).read()
     if (result != ""):
         metadata = json.loads(result)
         if len(metadata['DBInstances']) > 0:
@@ -42,7 +42,7 @@ def main():
 
     if (db_status(db_host) == "n/a"):
         print 'create a new RDS'
-        cmd = 'aws rds create-db-instance --db-name dryad_repo --db-instance-identifier %s --allocated-storage 10 --db-instance-class db.t2.small --engine postgres --master-username dryad_app --master-user-password %s --vpc-security-group-ids "sg-77d83c0b" --backup-retention-period 0' % (db_host, PGPASSWORD)
+        cmd = '/home/ubuntu/.local/bin/aws rds create-db-instance --db-name dryad_repo --db-instance-identifier %s --allocated-storage 10 --db-instance-class db.t2.small --engine postgres --master-username dryad_app --master-user-password %s --vpc-security-group-ids "sg-77d83c0b" --backup-retention-period 0' % (db_host, PGPASSWORD)
         os.popen(cmd)
         time.sleep(10)
 

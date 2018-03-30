@@ -21,6 +21,6 @@ rm -f $LOGFILE
 rsync -rltgoWvO --delete --exclude 'responselogging' --exclude 'statistics' --exclude 'dataoneMNlog' /opt/dryad/solr $HOME/solrBackups >$LOGFILE
 
 echo "aws sync"
-aws s3 cp $HOME/databaseBackups/dryadDBlatest.sql s3://dryad-backup/databaseBackups/dryadDBlatest.sql >$LOGFILE
-aws s3 sync /opt/dryad/solr s3://dryad-backup/solrBackups/ --delete >$LOGFILE
+/home/ubuntu/.local/bin/aws s3 cp $HOME/databaseBackups/dryadDBlatest.sql s3://dryad-backup/databaseBackups/dryadDBlatest.sql >$LOGFILE
+/home/ubuntu/.local/bin/aws s3 sync /opt/dryad/solr s3://dryad-backup/solrBackups/ --delete >$LOGFILE
 
