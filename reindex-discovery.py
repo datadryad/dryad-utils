@@ -16,17 +16,13 @@ from sql_utils import dict_from_query, rows_from_query, get_field_id
 # Global variables that are initialized farther down.
 _username = None
 _password = None
-_verbose = None
     
 def reindex_item(item_id):
-    global _verbose
     cmd = "/opt/dryad/bin/dspace update-discovery-index -i %s" % str(item_id)
     (result1, result2) = os.popen4(cmd)
     m = re.search('Wrote Item: (.*) to Index', result2.read())
     if m is not None:
-        if _verbose:
-            print m.group(1)
-            sys.stdout.flush()
+        return m.group(1) + "\n"
     
 def verify_archived_item(item_id):
     doi_field_id = get_field_id('dc.date.accessioned')
@@ -54,19 +50,18 @@ def main():
     parser.add_option("-q", "--quiet", action="store_false", dest="verbose")
     parser.add_option("--log", dest="log_file", help="optional log file")
     (options, args) = parser.parse_args()
-    global _username, _password, _verbose
+    global _username, _password
     _username = options.username
     _password = options.password
-    _verbose = options.verbose
     
     if options.log_file is not None:
         f = open(options.log_file, 'w')
     else: 
-        if not _verbose:
+        if options.verbose is not None:
+            f.sys.stdout
+        else:
             f = tempfile.NamedTemporaryFile()
             print f.name
-        else:
-            f = sys.stdout
     
     sql = "select item_id from item where owning_collection = 2 and in_archive = 't' order by item_id asc"    
     if options.date_from is not None or options.date_to is not None:
@@ -109,7 +104,7 @@ def main():
             f.write("ERROR: archived item %s does not have a dc.date.accessioned" % (item_id))
             sys.stderr.flush()
         else:
-            reindex_item(item_id)
+            f.write(reindex_item(item_id))
             update_ezid(item_id, f)
             f.flush()
     f.write("DONE\n")
