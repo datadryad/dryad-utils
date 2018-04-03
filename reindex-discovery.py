@@ -99,8 +99,8 @@ def main():
         f.write("%d of %d: indexing %s:\n" % (index, last_index, item_id))
         index = index + 1
         if not verify_archived_item(item_id):
-            sys.stderr.write("ERROR: archived item %s does not have a dc.date.accessioned" % (item_id))
-            f.write("ERROR: archived item %s does not have a dc.date.accessioned" % (item_id))
+            sys.stderr.write("ERROR: archived item %s does not have a dc.date.accessioned\n" % (item_id))
+            f.write("ERROR: archived item %s does not have a dc.date.accessioned\n" % (item_id))
             sys.stderr.flush()
         else:
             f.write(reindex_item(item_id))
