@@ -7,6 +7,7 @@ __author__ = 'daisieh'
 import re
 import os
 import sys
+import tempfile
 from optparse import OptionParser
 from datetime import datetime, date, time
 from doi_tool import run_ezid
