@@ -84,11 +84,11 @@ def main():
             end = dict_from_query("select last_value from item_seq")['last_value']
         else:
             end = options.item_to
-        f.write("%s to %s" % (str(start), str(end)))
+        f.write("%s to %s\n" % (str(start), str(end)))
         sql = "select item_id from item where owning_collection = 2 and in_archive = 't' and item_id >= %s and item_id <= %s order by item_id asc" % (str(start), str(end))
     items = rows_from_query (sql)
     labels = dict(zip(items[0], range(0,len(items[0]))))
-    f.write("%d items to index" % (len(items) -2))
+    f.write("%d items to index\n" % (len(items) -2))
     f.flush()
     curr_item = ""
     index = 1
@@ -98,7 +98,7 @@ def main():
         if item_id == curr_item:
             continue
         curr_item = item_id
-        f.write("%d of %d: indexing %s:" % (index, last_index, item_id))
+        f.write("%d of %d: indexing %s:\n" % (index, last_index, item_id))
         index = index + 1
         if not verify_archived_item(item_id):
             print "ERROR: archived item %s does not have a dc.date.accessioned" % (item_id)
@@ -107,7 +107,7 @@ def main():
             reindex_item(item_id)
             update_ezid(item_id, f)
             f.flush()
-    f.write("DONE")
+    f.write("DONE\n")
 if __name__ == '__main__':
     main()
 

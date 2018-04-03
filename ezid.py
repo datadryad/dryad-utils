@@ -214,10 +214,8 @@ def process(args, fh):
   _server = KNOWN_SERVERS
   _opener = urllib2.build_opener(MyHTTPErrorProcessor())
   
-  if 'pipe' in args:
-    _pipe = fh
-  else:
-    _pipe = sys.stdout
+  _pipe = fh
+
   # process credentials
   credentials = args.pop(0)
   if ":" in credentials:
