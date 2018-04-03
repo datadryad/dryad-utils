@@ -52,13 +52,17 @@ def main():
     parser.add_option("--username", dest="username", help="EZID username")
     parser.add_option("--password", dest="password", help="EZID password")
     parser.add_option("-q", "--quiet", action="store_false", dest="verbose")
+    parser.add_option("--log", dest="log_file", help="optional log file")
     (options, args) = parser.parse_args()
     global _username, _password, _verbose
     _username = options.username
     _password = options.password
     _verbose = options.verbose
     
-    if not _verbose:
+    if options.log_file is not None:
+        f = open(options.log_file, 'w')
+        
+    if f is None and not _verbose:
         f = tempfile.NamedTemporaryFile()
         print f.name
     else:
@@ -109,6 +113,7 @@ def main():
             update_ezid(item_id, f)
             f.flush()
     f.write("DONE\n")
+    f.close()
 if __name__ == '__main__':
     main()
 
