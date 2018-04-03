@@ -26,7 +26,7 @@ def reindex_item(item_id):
     
 def verify_archived_item(item_id):
     doi_field_id = get_field_id('dc.date.accessioned')
-    doi = dict_from_query("select text_value from metadatavalue where item_id = %s and metadata_field_id = %s;" % (item_id, doi_field_id))['text_value']
+    doi = dict_from_query("select text_value from metadatavalue where item_id = %s and metadata_field_id = %s;" % (item_id, doi_field_id))
     if doi is None:
         return False
     return True
