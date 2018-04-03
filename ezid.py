@@ -214,10 +214,6 @@ def process(args):
   _server = KNOWN_SERVERS
   _opener = urllib2.build_opener(MyHTTPErrorProcessor())
   
-  if 'pipe' in args:
-    _pipe = args['pipe']
-  else:
-    _pipe = sys.stdout
   # process credentials
   credentials = args.pop(0)
   if ":" in credentials:
@@ -242,7 +238,6 @@ def process(args):
     (type(OPERATIONS[operation]) is types.LambdaType and\
     not OPERATIONS[operation](len(args))):
     _pipe.write("incorrect number of arguments for operation")
-    return
 
   # Perform the operation.
 

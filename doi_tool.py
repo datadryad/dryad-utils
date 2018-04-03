@@ -90,7 +90,8 @@ def run_ezid(options):
     # add datacite file
     args.append('datacite')
     args.append('@%s' % f.name)
-    args.append(fh)
+    global _pipe
+    _pipe = fh
     
 #     ['create', 'doi:10.5061/DRYAD.8157N', '_target', 'http://datadryad.org/resource/doi:10.5061/dryad.8157n', 'datacite', '@/Users/daisie/Desktop/test.xml']
     process(args)
