@@ -57,7 +57,7 @@ def main():
     if options.log_file is not None:
         f = open(options.log_file, 'w')
     else: 
-        if options.verbose is not None:
+        if options.verbose is True:
             f.sys.stdout
         else:
             f = tempfile.NamedTemporaryFile()
