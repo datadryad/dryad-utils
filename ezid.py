@@ -181,7 +181,7 @@ def issueRequest (path, method, data=None, returnHeaders=False,
     sys.exit(1)
 
 def printAnvlResponse (response, sortLines=False):
-  global _server, _opener, _cookie
+  global _server, _opener, _cookie, _pipe
   response = response.splitlines()
   if sortLines and len(response) >= 1:
     statusLine = response[0]
@@ -189,7 +189,7 @@ def printAnvlResponse (response, sortLines=False):
     response.sort()
     response.insert(0, statusLine)
   for line in response:
-    print line
+    _pipe.write(line)
 
 
 def main():
@@ -210,9 +210,14 @@ def main():
   process(args)
 
 def process(args):
-  global _server, _opener, _cookie
+  global _server, _opener, _cookie, _pipe
   _server = KNOWN_SERVERS
   _opener = urllib2.build_opener(MyHTTPErrorProcessor())
+  
+  if 'pipe' in args:
+    _pipe = args['pipe']
+  else:
+    _pipe = sys.stdout
   # process credentials
   credentials = args.pop(0)
   if ":" in credentials:
@@ -226,7 +231,7 @@ def process(args):
   command = args.pop(0)
   operation = filter(lambda o: o.startswith(command), OPERATIONS)
   if len(operation) != 1: 
-    print "%s is unrecognized or ambiguous operation" % operation
+    _pipe.write("%s is unrecognized or ambiguous operation" % operation)
     return
   operation = operation[0]
   
