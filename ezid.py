@@ -190,7 +190,7 @@ def printAnvlResponse (response, sortLines=False):
     response.insert(0, statusLine)
   for line in response:
     _pipe.write(line)
-
+  _pipe.write("\n")
 
 def main():
   global _server, _opener, _cookie
@@ -229,7 +229,7 @@ def process(args, fh):
   command = args.pop(0)
   operation = filter(lambda o: o.startswith(command), OPERATIONS)
   if len(operation) != 1: 
-    _pipe.write("%s is unrecognized or ambiguous operation" % operation)
+    _pipe.write("%s is unrecognized or ambiguous operation\n" % operation)
     return
   operation = operation[0]
   
@@ -239,7 +239,7 @@ def process(args, fh):
     len(args) != OPERATIONS[operation]) or\
     (type(OPERATIONS[operation]) is types.LambdaType and\
     not OPERATIONS[operation](len(args))):
-    _pipe.write("incorrect number of arguments for operation")
+    _pipe.write("incorrect number of arguments for operation\n")
 
   # Perform the operation.
 
