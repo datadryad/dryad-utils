@@ -58,7 +58,7 @@ def main():
         f = open(options.log_file, 'w')
     else: 
         if options.verbose is True:
-            f.sys.stdout
+            f = sys.stdout
         else:
             f = tempfile.NamedTemporaryFile()
             print f.name
