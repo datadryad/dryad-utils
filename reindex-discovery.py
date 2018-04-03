@@ -95,9 +95,13 @@ def main():
         if _verbose:
             print "%d of %d: indexing %s:" % (index, last_index, item_id)
         index = index + 1
-        reindex_item(item_id)
-        update_ezid(item_id)
-        sys.stdout.flush()
+        if not verify_archived_item(item_id):
+            print "ERROR: archived item %s does not have a dc.date.accessioned" % (item_id)
+            sys.stdout.flush()
+        else:
+            reindex_item(item_id)
+            update_ezid(item_id)
+            sys.stdout.flush()
     if _verbose: 
         print "DONE"
 if __name__ == '__main__':
