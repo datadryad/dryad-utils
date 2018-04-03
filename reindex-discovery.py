@@ -7,6 +7,7 @@ __author__ = 'daisieh'
 import re
 import os
 import sys
+import tempfile
 from optparse import OptionParser
 from datetime import datetime, date, time
 from doi_tool import run_ezid
@@ -21,8 +22,7 @@ def reindex_item(item_id):
     (result1, result2) = os.popen4(cmd)
     m = re.search('Wrote Item: (.*) to Index', result2.read())
     if m is not None:
-        print m.group(1)
-    sys.stdout.flush()
+        return m.group(1) + "\n"
     
 def verify_archived_item(item_id):
     doi_field_id = get_field_id('dc.date.accessioned')
@@ -31,14 +31,13 @@ def verify_archived_item(item_id):
         return False
     return True
 
-def update_ezid(item_id):
+def update_ezid(item_id, f):
     global _username, _password
     doi_field_id = get_field_id('dc.identifier')
     doi = dict_from_query("select text_value from metadatavalue where item_id = %s and metadata_field_id = %s;" % (item_id, doi_field_id))['text_value']
     if doi is not None:
-        options = dict(doi=doi, is_blackout='False', action='update', username=_username, password=_password)
+        options = dict(doi=doi, is_blackout='False', action='update', username=_username, password=_password, pipe=f)
         run_ezid(options)
-    sys.stdout.flush()
 
 def main():
     parser = OptionParser()
@@ -48,10 +47,21 @@ def main():
     parser.add_option("--item_to", dest="item_to", help="ending item_id for process")
     parser.add_option("--username", dest="username", help="EZID username")
     parser.add_option("--password", dest="password", help="EZID password")
+    parser.add_option("-q", "--quiet", action="store_false", dest="verbose", default=True)
+    parser.add_option("--log", dest="log_file", help="optional log file")
     (options, args) = parser.parse_args()
     global _username, _password
     _username = options.username
     _password = options.password
+    
+    if options.log_file is not None:
+        f = open(options.log_file, 'w')
+    else: 
+        if options.verbose is True:
+            f = sys.stdout
+        else:
+            f = tempfile.NamedTemporaryFile()
+    
     sql = "select item_id from item where owning_collection = 2 and in_archive = 't' order by item_id asc"    
     if options.date_from is not None or options.date_to is not None:
         if options.date_from is None:
@@ -72,13 +82,12 @@ def main():
             end = dict_from_query("select last_value from item_seq")['last_value']
         else:
             end = options.item_to
-        print "%s to %s" % (str(start), str(end))
+        f.write("%s to %s\n" % (str(start), str(end)))
         sql = "select item_id from item where owning_collection = 2 and in_archive = 't' and item_id >= %s and item_id <= %s order by item_id asc" % (str(start), str(end))
-        print sql
     items = rows_from_query (sql)
     labels = dict(zip(items[0], range(0,len(items[0]))))
-    print "%d items to index" % (len(items) -2)
-    sys.stdout.flush()
+    f.write("%d items to index\n" % (len(items) -2))
+    f.flush()
     curr_item = ""
     index = 1
     last_index = len(items) -2
@@ -87,11 +96,18 @@ def main():
         if item_id == curr_item:
             continue
         curr_item = item_id
-        print "%d of %d: indexing %s:" % (index, last_index, item_id)
+        f.write("%d of %d: indexing %s:\n" % (index, last_index, item_id))
         index = index + 1
-        reindex_item(item_id)
-        update_ezid(item_id)
-    print "DONE"
+        if not verify_archived_item(item_id):
+            sys.stderr.write("ERROR: archived item %s does not have a dc.date.accessioned" % (item_id))
+            f.write("ERROR: archived item %s does not have a dc.date.accessioned" % (item_id))
+            sys.stderr.flush()
+        else:
+            f.write(reindex_item(item_id))
+            update_ezid(item_id, f)
+            f.flush()
+    f.write("DONE\n")
+    f.close()
 if __name__ == '__main__':
     main()
 

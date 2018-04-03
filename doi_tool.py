@@ -39,9 +39,14 @@ def run_ezid(options):
     f = None
     args = []
     
+    if 'pipe' in options:
+        fh = options['pipe']
+    else:
+        fh = sys.stdout
+    
     # process username/password
     if options['username'] is None or options['password'] is None:
-        print "Username and password must be provided"
+        fh.write("Username and password must be provided\n")
         return
     args.append("%s:%s" % (options['username'], options['password']))
     
@@ -51,7 +56,7 @@ def run_ezid(options):
     elif (options['action'] == 'update'):
         args.append("update")
     else:
-        print "%s is not a valid action" % (options['action'])
+        fh.write("%s is not a valid action\n" % (options['action']))
         return
     
     # add ezid doi to register
@@ -59,7 +64,7 @@ def run_ezid(options):
     if doi_matcher is not None:
         args.append("doi:%s/%s" % (doi_matcher.group(2), doi_matcher.group(3).upper()))
     else:
-        print "No properly formatted DOI provided"
+        fh.write("No properly formatted DOI provided\n")
         return
     
     # add target:
@@ -87,7 +92,7 @@ def run_ezid(options):
     args.append('@%s' % f.name)
     
 #     ['create', 'doi:10.5061/DRYAD.8157N', '_target', 'http://datadryad.org/resource/doi:10.5061/dryad.8157n', 'datacite', '@/Users/daisie/Desktop/test.xml']
-    process(args)
+    process(args, fh)
     os.remove(f.name)
     os.remove(crosswalk_file.name)
     os.remove(mets_file.name)

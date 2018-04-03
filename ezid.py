@@ -181,7 +181,7 @@ def issueRequest (path, method, data=None, returnHeaders=False,
     sys.exit(1)
 
 def printAnvlResponse (response, sortLines=False):
-  global _server, _opener, _cookie
+  global _server, _opener, _cookie, _pipe
   response = response.splitlines()
   if sortLines and len(response) >= 1:
     statusLine = response[0]
@@ -189,8 +189,8 @@ def printAnvlResponse (response, sortLines=False):
     response.sort()
     response.insert(0, statusLine)
   for line in response:
-    print line
-
+    _pipe.write(line)
+  _pipe.write("\n")
 
 def main():
   global _server, _opener, _cookie
@@ -207,12 +207,15 @@ def main():
   options, args = parser.parse_args()
   if len(args) < 2: parser.error("insufficient arguments")
   
-  process(args)
+  process(args, sys.stdout)
 
-def process(args):
-  global _server, _opener, _cookie
+def process(args, fh):
+  global _server, _opener, _cookie, _pipe
   _server = KNOWN_SERVERS
   _opener = urllib2.build_opener(MyHTTPErrorProcessor())
+  
+  _pipe = fh
+
   # process credentials
   credentials = args.pop(0)
   if ":" in credentials:
@@ -226,7 +229,7 @@ def process(args):
   command = args.pop(0)
   operation = filter(lambda o: o.startswith(command), OPERATIONS)
   if len(operation) != 1: 
-    print "%s is unrecognized or ambiguous operation" % operation
+    _pipe.write("%s is unrecognized or ambiguous operation\n" % operation)
     return
   operation = operation[0]
   
@@ -236,7 +239,7 @@ def process(args):
     len(args) != OPERATIONS[operation]) or\
     (type(OPERATIONS[operation]) is types.LambdaType and\
     not OPERATIONS[operation](len(args))):
-    parser.error("incorrect number of arguments for operation")
+    _pipe.write("incorrect number of arguments for operation\n")
 
   # Perform the operation.
 
