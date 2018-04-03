@@ -97,7 +97,7 @@ def main():
         if item_id == curr_item:
             continue
         curr_item = item_id
-        f.print("%d of %d: indexing %s:" % (index, last_index, item_id))
+        f.write("%d of %d: indexing %s:" % (index, last_index, item_id))
         index = index + 1
         if not verify_archived_item(item_id):
             print "ERROR: archived item %s does not have a dc.date.accessioned" % (item_id)
