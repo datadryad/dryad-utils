@@ -61,12 +61,12 @@ def main():
     
     if options.log_file is not None:
         f = open(options.log_file, 'w')
-        
-    if f is None and not _verbose:
-        f = tempfile.NamedTemporaryFile()
-        print f.name
-    else:
-        f = sys.stdout
+    else: 
+        if not _verbose:
+            f = tempfile.NamedTemporaryFile()
+            print f.name
+        else:
+            f = sys.stdout
     
     sql = "select item_id from item where owning_collection = 2 and in_archive = 't' order by item_id asc"    
     if options.date_from is not None or options.date_to is not None:
