@@ -15,14 +15,17 @@ from sql_utils import dict_from_query, rows_from_query, get_field_id
 # Global variables that are initialized farther down.
 _username = None
 _password = None
+_verbose = None
     
 def reindex_item(item_id):
+    global _verbose
     cmd = "/opt/dryad/bin/dspace update-discovery-index -i %s" % str(item_id)
     (result1, result2) = os.popen4(cmd)
     m = re.search('Wrote Item: (.*) to Index', result2.read())
     if m is not None:
-        print m.group(1)
-    sys.stdout.flush()
+        if _verbose:
+            print m.group(1)
+            sys.stdout.flush()
     
 def update_ezid(item_id):
     global _username, _password
@@ -31,7 +34,6 @@ def update_ezid(item_id):
     if doi is not None:
         options = dict(doi=doi, is_blackout='False', action='update', username=_username, password=_password)
         run_ezid(options)
-    sys.stdout.flush()
 
 def main():
     parser = OptionParser()
@@ -41,10 +43,12 @@ def main():
     parser.add_option("--item_to", dest="item_to", help="ending item_id for process")
     parser.add_option("--username", dest="username", help="EZID username")
     parser.add_option("--password", dest="password", help="EZID password")
+    parser.add_option("-q", "--quiet", action="store_false", dest="verbose")
     (options, args) = parser.parse_args()
-    global _username, _password
+    global _username, _password, _verbose
     _username = options.username
     _password = options.password
+    _verbose = options.verbose
     sql = "select item_id from item where owning_collection = 2 and in_archive = 't' order by item_id asc"    
     if options.date_from is not None or options.date_to is not None:
         if options.date_from is None:
@@ -65,13 +69,14 @@ def main():
             end = dict_from_query("select last_value from item_seq")['last_value']
         else:
             end = options.item_to
-        print "%s to %s" % (str(start), str(end))
+        if _verbose:
+            print "%s to %s" % (str(start), str(end))
         sql = "select item_id from item where owning_collection = 2 and in_archive = 't' and item_id >= %s and item_id <= %s order by item_id asc" % (str(start), str(end))
-        print sql
     items = rows_from_query (sql)
     labels = dict(zip(items[0], range(0,len(items[0]))))
-    print "%d items to index" % (len(items) -2)
-    sys.stdout.flush()
+    if _verbose:
+        print "%d items to index" % (len(items) -2)
+        sys.stdout.flush()
     curr_item = ""
     index = 1
     last_index = len(items) -2
@@ -80,11 +85,11 @@ def main():
         if item_id == curr_item:
             continue
         curr_item = item_id
-        print "%d of %d: indexing %s:" % (index, last_index, item_id)
+        if _verbose:
+            print "%d of %d: indexing %s:" % (index, last_index, item_id)
         index = index + 1
         reindex_item(item_id)
         update_ezid(item_id)
-    print "DONE"
 if __name__ == '__main__':
     main()
 
