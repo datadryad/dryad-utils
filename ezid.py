@@ -241,7 +241,8 @@ def process(args):
     len(args) != OPERATIONS[operation]) or\
     (type(OPERATIONS[operation]) is types.LambdaType and\
     not OPERATIONS[operation](len(args))):
-    parser.error("incorrect number of arguments for operation")
+    _pipe.write("incorrect number of arguments for operation")
+    return
 
   # Perform the operation.
 
