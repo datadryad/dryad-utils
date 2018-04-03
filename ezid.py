@@ -207,13 +207,17 @@ def main():
   options, args = parser.parse_args()
   if len(args) < 2: parser.error("insufficient arguments")
   
-  process(args)
+  process(args, sys.stdout)
 
-def process(args):
+def process(args, fh):
   global _server, _opener, _cookie, _pipe
   _server = KNOWN_SERVERS
   _opener = urllib2.build_opener(MyHTTPErrorProcessor())
   
+  if 'pipe' in args:
+    _pipe = fh
+  else:
+    _pipe = sys.stdout
   # process credentials
   credentials = args.pop(0)
   if ":" in credentials:
