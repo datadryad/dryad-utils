@@ -47,7 +47,7 @@ def main():
     parser.add_option("--item_to", dest="item_to", help="ending item_id for process")
     parser.add_option("--username", dest="username", help="EZID username")
     parser.add_option("--password", dest="password", help="EZID password")
-    parser.add_option("-q", "--quiet", action="store_false", dest="verbose")
+    parser.add_option("-q", "--quiet", action="store_false", dest="verbose", default=True)
     parser.add_option("--log", dest="log_file", help="optional log file")
     (options, args) = parser.parse_args()
     global _username, _password
