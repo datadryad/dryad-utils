@@ -59,7 +59,7 @@ def main():
     _verbose = options.verbose
     
     if not _verbose:
-        f = tempfile.NamedTemporaryFile(delete=False)
+        f = tempfile.NamedTemporaryFile()
         print f.name
     else:
         f = sys.stdout
@@ -101,8 +101,9 @@ def main():
         f.write("%d of %d: indexing %s:\n" % (index, last_index, item_id))
         index = index + 1
         if not verify_archived_item(item_id):
-            print "ERROR: archived item %s does not have a dc.date.accessioned" % (item_id)
-            f.flush()
+            sys.stderr.write("ERROR: archived item %s does not have a dc.date.accessioned" % (item_id))
+            f.write("ERROR: archived item %s does not have a dc.date.accessioned" % (item_id))
+            sys.stderr.flush()
         else:
             reindex_item(item_id)
             update_ezid(item_id, f)
