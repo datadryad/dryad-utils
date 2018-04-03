@@ -39,9 +39,14 @@ def run_ezid(options):
     f = None
     args = []
     
+    if 'pipe' in options:
+        fh = options['pipe']
+    else:
+        fh = sys.stdout
+    
     # process username/password
     if options['username'] is None or options['password'] is None:
-        print "Username and password must be provided"
+        fh.write("Username and password must be provided")
         return
     args.append("%s:%s" % (options['username'], options['password']))
     
@@ -51,7 +56,7 @@ def run_ezid(options):
     elif (options['action'] == 'update'):
         args.append("update")
     else:
-        print "%s is not a valid action" % (options['action'])
+        fh.write("%s is not a valid action" % (options['action']))
         return
     
     # add ezid doi to register
@@ -59,7 +64,7 @@ def run_ezid(options):
     if doi_matcher is not None:
         args.append("doi:%s/%s" % (doi_matcher.group(2), doi_matcher.group(3).upper()))
     else:
-        print "No properly formatted DOI provided"
+        fh.write("No properly formatted DOI provided")
         return
     
     # add target:

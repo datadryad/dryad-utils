@@ -34,12 +34,12 @@ def verify_archived_item(item_id):
         return False
     return True
 
-def update_ezid(item_id):
+def update_ezid(item_id, f):
     global _username, _password
     doi_field_id = get_field_id('dc.identifier')
     doi = dict_from_query("select text_value from metadatavalue where item_id = %s and metadata_field_id = %s;" % (item_id, doi_field_id))['text_value']
     if doi is not None:
-        options = dict(doi=doi, is_blackout='False', action='update', username=_username, password=_password)
+        options = dict(doi=doi, is_blackout='False', action='update', username=_username, password=_password, pipe=f)
         run_ezid(options)
 
 def main():
@@ -56,6 +56,13 @@ def main():
     _username = options.username
     _password = options.password
     _verbose = options.verbose
+    
+    if not _verbose:
+        f = tempfile.NamedTemporaryFile(delete=False)
+        print f.name
+    else:
+        f = sys.stdout
+    
     sql = "select item_id from item where owning_collection = 2 and in_archive = 't' order by item_id asc"    
     if options.date_from is not None or options.date_to is not None:
         if options.date_from is None:
@@ -76,14 +83,12 @@ def main():
             end = dict_from_query("select last_value from item_seq")['last_value']
         else:
             end = options.item_to
-        if _verbose:
-            print "%s to %s" % (str(start), str(end))
+        f.write("%s to %s" % (str(start), str(end)))
         sql = "select item_id from item where owning_collection = 2 and in_archive = 't' and item_id >= %s and item_id <= %s order by item_id asc" % (str(start), str(end))
     items = rows_from_query (sql)
     labels = dict(zip(items[0], range(0,len(items[0]))))
-    if _verbose:
-        print "%d items to index" % (len(items) -2)
-        sys.stdout.flush()
+    f.write("%d items to index" % (len(items) -2))
+    f.flush()
     curr_item = ""
     index = 1
     last_index = len(items) -2
@@ -92,18 +97,16 @@ def main():
         if item_id == curr_item:
             continue
         curr_item = item_id
-        if _verbose:
-            print "%d of %d: indexing %s:" % (index, last_index, item_id)
+        f.print("%d of %d: indexing %s:" % (index, last_index, item_id))
         index = index + 1
         if not verify_archived_item(item_id):
             print "ERROR: archived item %s does not have a dc.date.accessioned" % (item_id)
-            sys.stdout.flush()
+            f.flush()
         else:
             reindex_item(item_id)
-            update_ezid(item_id)
-            sys.stdout.flush()
-    if _verbose: 
-        print "DONE"
+            update_ezid(item_id, f)
+            f.flush()
+    f.write("DONE")
 if __name__ == '__main__':
     main()
 
