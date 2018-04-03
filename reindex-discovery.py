@@ -27,6 +27,13 @@ def reindex_item(item_id):
             print m.group(1)
             sys.stdout.flush()
     
+def verify_archived_item(item_id):
+    doi_field_id = get_field_id('dc.date.accessioned')
+    doi = dict_from_query("select text_value from metadatavalue where item_id = %s and metadata_field_id = %s;" % (item_id, doi_field_id))['text_value']
+    if doi is None:
+        return False
+    return True
+
 def update_ezid(item_id):
     global _username, _password
     doi_field_id = get_field_id('dc.identifier')
@@ -90,6 +97,9 @@ def main():
         index = index + 1
         reindex_item(item_id)
         update_ezid(item_id)
+        sys.stdout.flush()
+    if _verbose: 
+        print "DONE"
 if __name__ == '__main__':
     main()
 
