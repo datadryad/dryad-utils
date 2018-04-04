@@ -173,6 +173,7 @@ def issueRequest (path, method, data=None, returnHeaders=False,
       else:
         return response.decode("UTF-8")
   except urllib2.HTTPError, e:
+    sys.stderr.write(data)
     sys.stderr.write("%s %s\n" % (e.code, e.msg))
     if e.fp != None:
       response = e.fp.read()
