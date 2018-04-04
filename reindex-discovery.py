@@ -26,7 +26,7 @@ def reindex_item(item_id):
     
 def verify_archived_item(item_id):
     doi_field_id = get_field_id('dc.date.accessioned')
-    doi = dict_from_query("select text_value from metadatavalue where item_id = %s and metadata_field_id = %s;" % (item_id, doi_field_id))['text_value']
+    doi = dict_from_query("select text_value from metadatavalue where item_id = %s and metadata_field_id = %s;" % (item_id, doi_field_id))
     if doi is None:
         return False
     return True
@@ -61,7 +61,6 @@ def main():
             f = sys.stdout
         else:
             f = tempfile.NamedTemporaryFile()
-            print f.name
     
     sql = "select item_id from item where owning_collection = 2 and in_archive = 't' order by item_id asc"    
     if options.date_from is not None or options.date_to is not None:
@@ -100,8 +99,8 @@ def main():
         f.write("%d of %d: indexing %s:\n" % (index, last_index, item_id))
         index = index + 1
         if not verify_archived_item(item_id):
-            sys.stderr.write("ERROR: archived item %s does not have a dc.date.accessioned" % (item_id))
-            f.write("ERROR: archived item %s does not have a dc.date.accessioned" % (item_id))
+            sys.stderr.write("ERROR: archived item %s does not have a dc.date.accessioned\n" % (item_id))
+            f.write("ERROR: archived item %s does not have a dc.date.accessioned\n" % (item_id))
             sys.stderr.flush()
         else:
             f.write(reindex_item(item_id))
