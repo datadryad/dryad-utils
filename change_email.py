@@ -5,6 +5,8 @@
 __author__ = 'daisie'
 
 import os
+import re
+import sys
 from sql_utils import dict_from_query, execute_sql_query, rows_from_query, list_from_query
 
 if __name__ == '__main__':
@@ -18,7 +20,7 @@ if __name__ == '__main__':
         user_id = user_dict['eperson_id']
     else:
         print "Did not find a matching eperson"
-        return
+        sys.exit()
     print "Current email address is: %s" % (user_dict['email'])
     new_address = raw_input('Enter the new email address: ')
     execute_sql_query("update eperson set email = '%s' where eperson_id = %s;" % (new_address, user_id))
