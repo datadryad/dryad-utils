@@ -5,6 +5,7 @@
 __author__ = 'daisie'
 
 import os
+import re
 from sql_utils import dict_from_query, execute_sql_query, rows_from_query, list_from_query
 
 if __name__ == '__main__':
