@@ -23,7 +23,7 @@ def main():
             cmd = '/usr/local/bin/aws s3api head-object --bucket %s --key "%s"' % (FTP_BUCKET, key)
             metadata = json.load(os.popen(cmd))
             if ('md5' not in metadata['Metadata']):
-				print key
+                print key
                 print "  ...calculating and adding an md5 tag"
                 hash = hashlib.md5()
                 with open(TRANSFER_PATH + key) as f:
