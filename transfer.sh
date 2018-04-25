@@ -17,4 +17,3 @@ then
 	echo "done"
 	rm ~/transfer_lock
 fi
-chmod -R 777 /dryad-data/transfer-complete/
