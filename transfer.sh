@@ -8,9 +8,9 @@ then
 	echo "transferring"
 	touch ~/transfer_lock
 	echo "rsyncing"
-	# Find the files in transfer that were modified no sooner than 3 hours ago; 
+	# Find the files in transfer that were modified no sooner than 1 hour ago; 
 	# rsync those to the transfer-complete folder and remove from source.
-	find /dryad-data/transfer -mindepth 2 -mmin +180 -printf %P\\0 \
+	find /dryad-data/transfer -mindepth 2 -mmin +60 -printf %P\\0 \
 	| rsync -rltgDzi --no-p --no-g --chmod=ug=rwx,o=rx --remove-source-files --files-from=- --from0 /dryad-data/transfer/ /dryad-data/transfer-complete
 	echo "aws sync"
 	/usr/local/bin/aws s3 sync /dryad-data/transfer-complete/ s3://dryad-ftp/ --delete
