@@ -1,2 +1,6 @@
-Pillow==2.3.0
-wsgiref==0.1.2
+Pillow>=2.3.0
+wsgiref>=0.1.2
+ezid>=0.3
+sqlalchemy>=1.2.5
+awscli>=1.14.34
+boto3>=1.6.19
