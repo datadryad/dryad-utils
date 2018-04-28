@@ -61,10 +61,10 @@ def run_ezid(options):
         sys.exit("%s is not a valid action" % (options['action']))
     
     # add ezid doi to register
-    doi_matcher = re.match("(doi:)*(.+)\/(.+)", doi)
+    doi_matcher = re.match("(doi:)*(10.\d+\/)(.+)", doi)
     if doi_matcher is not None:
-        dc_doi = "doi:%s/%s" % (doi_matcher.group(2), doi_matcher.group(3).upper())
-        raw_doi = "doi:%s/%s" % (doi_matcher.group(2), doi_matcher.group(3).lower())
+        dc_doi = "doi:%s%s" % (doi_matcher.group(2), doi_matcher.group(3).upper())
+        raw_doi = "doi:%s%s" % (doi_matcher.group(2), doi_matcher.group(3).lower())
     else:
         sys.exit("No properly formatted DOI provided")
     
