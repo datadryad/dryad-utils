@@ -9,7 +9,7 @@ import os
 import sys
 from optparse import OptionParser
 from datetime import datetime, date, time
-from doi_tool import run_ezid
+import doi_tool
 from sql_utils import dict_from_query, rows_from_query, get_field_id
 
 # Global variables that are initialized farther down.
@@ -30,7 +30,7 @@ def update_ezid(item_id):
     doi = dict_from_query("select text_value from metadatavalue where item_id = %s and metadata_field_id = %s;" % (item_id, doi_field_id))['text_value']
     if doi is not None:
         options = dict(doi=doi, is_blackout='False', action='update', username=_username, password=_password)
-        run_ezid(options)
+        doi_tool.run_ezid(options)
     sys.stdout.flush()
 
 def main():
