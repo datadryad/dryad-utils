@@ -19,6 +19,11 @@ if 'DOI_SERVER' in os.environ:
     DOI_SERVER = os.environ['DOI_SERVER']
 else:
     DOI_SERVER = 'https://ezid.cdlib.org'
+if 'DOI_USER' in os.environ:
+    DOI_USER = os.environ['DOI_USER']
+if 'DOI_PASSWORD' in os.environ:
+    DOI_PASSWORD = os.environ['DOI_PASSWORD']
+
 
 
 def main():
@@ -36,17 +41,21 @@ def main():
     run_ezid(opt_array)
     
 def run_ezid(options):
-    global EZID_CLIENT, DOI_SERVER
+    global EZID_CLIENT, DOI_SERVER, DOI_USER, DOI_PASSWORD
     # options should have doi, is_blackout, action, username, password
     doi = options['doi']
     f = None
     
     # process username/password
     if options['username'] is None or options['password'] is None:
-        sys.exit("Username and password must be provided")
+        if DOI_USER is None and DOI_PASSWORD is None:
+            sys.exit("Username and password must be provided")
+    else:
+        DOI_USER = options['username']
+        DOI_PASSWORD = options['password']
 
     if EZID_CLIENT is None:
-        EZID_CLIENT = EZID.EZIDClient(server=DOI_SERVER, credentials={'username':options['username'], 'password':options['password']})
+        EZID_CLIENT = EZID.EZIDClient(server=DOI_SERVER, credentials={'username':DOI_USER, 'password':DOI_PASSWORD})
         try:
             s = subprocess.check_output(['which', 'xsltproc'])
         except subprocess.CalledProcessError as e:
