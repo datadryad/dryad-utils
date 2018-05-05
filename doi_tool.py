@@ -21,8 +21,8 @@ else:
     DOI_SERVER = 'https://ezid.cdlib.org'
 if 'DOI_USER' in os.environ:
     DOI_USER = os.environ['DOI_USER']
-if 'DOI_PASSWORD' in os.environ:
-    DOI_PASSWORD = os.environ['DOI_PASSWORD']
+if 'DOI_PASS' in os.environ:
+    DOI_PASSWORD = os.environ['DOI_PASS']
 
 
 
