@@ -20,10 +20,10 @@ def main():
         parts = re.split('\s+', file, 3)
         if (re.match("^\.", parts[3]) is None):
             key = parts[3].rstrip()
-            print key
             cmd = '/usr/local/bin/aws s3api head-object --bucket %s --key "%s"' % (FTP_BUCKET, key)
             metadata = json.load(os.popen(cmd))
             if ('md5' not in metadata['Metadata']):
+                print key
                 print "  ...calculating and adding an md5 tag"
                 hash = hashlib.md5()
                 with open(TRANSFER_PATH + key) as f:
@@ -33,8 +33,6 @@ def main():
                 cmd = '/usr/local/bin/aws s3 cp "s3://%s/%s" "s3://%s/%s" --metadata md5=%s' % (FTP_BUCKET, key, FTP_BUCKET, key, md5)
                 os.popen(cmd)
                 print "  md5 tag of %s was added" % (md5)
-            else:
-                print "  md5 tag is %s" % (metadata['Metadata']['md5'])
         sys.stdout.flush()            
 
 if __name__ == '__main__':
