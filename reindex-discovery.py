@@ -23,6 +23,7 @@ def reindex_item(item_id):
     m = re.search('Wrote Item: (.*) to Index', result2.read())
     if m is not None:
         return m.group(1) + "\n"
+    return ""
     
 def verify_archived_item(item_id):
     doi_field_id = get_field_id('dc.date.accessioned')

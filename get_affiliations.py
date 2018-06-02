@@ -17,14 +17,17 @@ def main():
     if len(sys.argv) > 1:
         sql = "select mdv.text_value, item.item_id from metadatavalue as mdv, item where item.item_id = mdv.item_id and mdv.metadata_field_id = %s and item.owning_collection = 2 and mdv.text_value='%s'" % (pub_doi_field, sys.argv[1])
         pub_doi_list = rows_from_query(sql)
-        for pub_doi_item in pub_doi_list:        
-            process_pub_doi(pub_doi_item)
+        if pub_doi_list is not None:
+            for pub_doi_item in pub_doi_list:        
+                process_pub_doi(pub_doi_item)
     else:
         sql = 'select mdv.text_value, item.item_id from metadatavalue as mdv, item where item.item_id = mdv.item_id and mdv.metadata_field_id = %s and item.owning_collection = 2 order by item.item_id desc' % (pub_doi_field)
         pub_doi_list = rows_from_query(sql)
+        pub_doi_list.pop(0)
+        pub_doi_list.pop()
         for pub_doi_item in pub_doi_list:
-            process_pub_doi(pub_doi_item)
-
+#            process_pub_doi(pub_doi_item)
+            print pub_doi_item[0]
 
 def process_pub_doi(pub_doi_item):
     dryad_doi_field = get_field_id('dc.identifier')
