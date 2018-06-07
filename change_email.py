@@ -15,7 +15,7 @@ if __name__ == '__main__':
     if is_user_id is not None:
         user_dict = dict_from_query("select * from eperson where eperson_id = %s;" % (user_spec))
     else:
-        user_dict = dict_from_query("select * from eperson where email = '%s';" % (user_spec))
+        user_dict = dict_from_query("select * from eperson where email = '%s';" % (user_spec.strip().lower()))
     if user_dict is not None:
         user_id = user_dict['eperson_id']
     else:
