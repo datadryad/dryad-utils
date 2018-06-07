@@ -22,8 +22,8 @@ if __name__ == '__main__':
         print "Did not find a matching eperson"
         sys.exit()
     print "Current email address is: %s" % (user_dict['email'])
-    new_address = raw_input('Enter the new email address: ')
-    execute_sql_query("update eperson set email = '%s' where eperson_id = %s;" % (new_address.lower(), user_id))
+    new_address = raw_input('Enter the new email address: ').lower().strip()
+    execute_sql_query("update eperson set email = '%s' where eperson_id = %s;" % (new_address, user_id))
     items = rows_from_query('select item_id from item where submitter_id = %s;' % (user_id))
     for item in items[1:len(items)-1]:
         statement = "bash /opt/dryad/bin/dspace update-discovery-index -i %s" % (item[0])
