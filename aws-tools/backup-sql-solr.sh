@@ -18,9 +18,12 @@ lock || { exit 1; }
 
 echo "perform the rsync"
 rm -f $LOGFILE
-rsync -rltgoWvO --delete --exclude 'responselogging' --exclude 'statistics' --exclude 'dataoneMNlog' /opt/dryad/solr $HOME/solrBackups >$LOGFILE
+rsync -rltgoWvO --delete /opt/dryad/solr/authority $HOME/solrBackups >$LOGFILE
+rsync -rltgoWvO --delete /opt/dryad/solr/dryad $HOME/solrBackups >$LOGFILE
+rsync -rltgoWvO --delete /opt/dryad/solr/search $HOME/solrBackups >$LOGFILE
+rsync -rltgoWvO --delete /opt/dryad/solr/xoai $HOME/solrBackups >$LOGFILE
 
 echo "aws sync"
-aws s3 cp $HOME/databaseBackups/dryadDBlatest.sql s3://dryad-backup/databaseBackups/dryadDBlatest.sql >$LOGFILE
-aws s3 sync /opt/dryad/solr s3://dryad-backup/solrBackups/ --delete >$LOGFILE
+/home/ubuntu/.local/bin/aws s3 cp $HOME/databaseBackups/dryadDBlatest.sql s3://dryad-backup/databaseBackups/dryadDBlatest.sql >$LOGFILE
+/home/ubuntu/.local/bin/aws s3 sync $HOME/solrBackups s3://dryad-backup/solrBackups/ --delete >$LOGFILE
 
