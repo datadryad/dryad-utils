@@ -26,7 +26,7 @@ echo Rebuilding the dryad database with $NEXT_DB...
 echo $PGPASSWORD
 
 # create a new RDS
-aws rds create-db-instance --db-name dryad_repo --db-instance-identifier secundus-db-$NEXT_DB --allocated-storage 50 --db-instance-class db.t2.small --engine postgres --master-username dryad_app --master-user-password $PGPASSWORD --publicly-accessible --vpc-security-group-ids "sg-77d83c0b"
+/home/ubuntu/.local/bin/aws rds create-db-instance --db-name dryad_repo --db-instance-identifier secundus-db-$NEXT_DB --allocated-storage 50 --db-instance-class db.t2.small --engine postgres --master-username dryad_app --master-user-password $PGPASSWORD --publicly-accessible --vpc-security-group-ids "sg-77d83c0b"
 
 # ensure the new hostname is in the .pgpass file (it is for flip and flop)
 
@@ -46,7 +46,7 @@ cp /home/ec2-user/database-switch/maven-settings.$NEXT_DB /home/ec2-user/.m2/set
 /home/ec2-user/bin/redeploy-dryad.sh
 
 # delete old instance of the database
-aws rds delete-db-instance --db-instance-identifier secundus-db-$CURRENT_DB --skip-final-snapshot
+/home/ubuntu/.local/bin/aws rds delete-db-instance --db-instance-identifier secundus-db-$CURRENT_DB --skip-final-snapshot
 
 # poke the SOLR index to ensure it is updated
 sudo /opt/dryad/bin/dspace update-discovery-index -f -i 172834

@@ -17,16 +17,17 @@ def main():
     if len(sys.argv) > 1:
         sql = "select mdv.text_value, item.item_id from metadatavalue as mdv, item where item.item_id = mdv.item_id and mdv.metadata_field_id = %s and item.owning_collection = 2 and mdv.text_value='%s'" % (pub_doi_field, sys.argv[1])
         pub_doi_list = rows_from_query(sql)
-        print pub_doi_list
-        for pub_doi_item in pub_doi_list:        
-            process_pub_doi(pub_doi_item)
+        if pub_doi_list is not None:
+            for pub_doi_item in pub_doi_list:        
+                process_pub_doi(pub_doi_item)
     else:
-        sql = 'select mdv.text_value, item.item_id from metadatavalue as mdv, item where item.item_id = mdv.item_id and mdv.metadata_field_id = %s and item.owning_collection = 2' % (pub_doi_field)
+        sql = 'select mdv.text_value, item.item_id from metadatavalue as mdv, item where item.item_id = mdv.item_id and mdv.metadata_field_id = %s and item.owning_collection = 2 order by item.item_id desc' % (pub_doi_field)
         pub_doi_list = rows_from_query(sql)
-        print len(pub_doi_list)
+        pub_doi_list.pop(0)
+        pub_doi_list.pop()
         for pub_doi_item in pub_doi_list:
-            process_pub_doi(pub_doi_item)
-
+#            process_pub_doi(pub_doi_item)
+            print pub_doi_item[0]
 
 def process_pub_doi(pub_doi_item):
     dryad_doi_field = get_field_id('dc.identifier')
@@ -39,16 +40,20 @@ def process_pub_doi(pub_doi_item):
         dryad_doi = var_from_query('select text_value from metadatavalue where item_id = %s and metadata_field_id = %s' % (item_id, dryad_doi_field), 'text_value')
         title = var_from_query('select text_value from metadatavalue where item_id = %s and metadata_field_id = %s' % (item_id, title_field), 'text_value')
         pub_name = var_from_query('select text_value from metadatavalue where item_id = %s and metadata_field_id = %s' % (item_id, pub_name_field), 'text_value')
-        r = requests.get('http://api.crossref.org/works/%s' % pub_doi)
-        if r.status_code == 200:
-            authors = find_authors(r.json())
-            for author in authors:
-                print '%s\t%s\t%s\t%s\t%s' % (dryad_doi, title, pub_doi, pub_name, author.encode('utf-8'))
-            funders = find_funders(r.json())
-            for funder in funders:
-                print '%s\t%s\t%s\t%s\t\t\t\t%s' % (dryad_doi, title, pub_doi, pub_name, funder.encode('utf-8'))
-        else:
-            print "no result for %s: %s" % (pub_doi, r.status_code)
+        try:
+            r = requests.get('https://api.crossref.org/works/%s?mailto=admin@datadryad.org' % pub_doi)
+            if r.status_code == 200:
+                print item_id
+                authors = find_authors(r.json())
+                for author in authors:
+                    print '%s\t%s\t%s\t%s\t%s' % (dryad_doi, title, pub_doi, pub_name, author.encode('utf-8'))
+                funders = find_funders(r.json())
+                for funder in funders:
+                    print '%s\t%s\t%s\t%s\t\t\t\t%s' % (dryad_doi, title, pub_doi, pub_name, funder.encode('utf-8'))
+            else:
+                print "no result for %s: %s" % (pub_doi, r.status_code)
+        except:
+            print "error occurred while executing " + pub_doi
     sys.stdout.flush()
     
 def find_funders(pub_json):

@@ -46,6 +46,11 @@ def run_ezid(options):
     doi = options['doi']
     f = None
     
+    if 'pipe' in options:
+        fh = options['pipe']
+    else:
+        fh = sys.stdout
+    
     # process username/password
     if options['username'] is None or options['password'] is None:
         if DOI_USER is None and DOI_PASSWORD is None:
@@ -67,7 +72,8 @@ def run_ezid(options):
     elif (options['action'] == 'update'):
         action = "update"
     else:
-        sys.exit("%s is not a valid action" % (options['action']))
+        fh.write("%s is not a valid action\n" % (options['action']))
+        return
     
     # add ezid doi to register
     doi_matcher = re.match("(doi:)*(10.\d+\/)(.+)", doi)
@@ -75,9 +81,8 @@ def run_ezid(options):
         dc_doi = "doi:%s%s" % (doi_matcher.group(2), doi_matcher.group(3).upper())
         raw_doi = "doi:%s%s" % (doi_matcher.group(2), doi_matcher.group(3).lower())
     else:
-        sys.exit("No properly formatted DOI provided")
-    
-    data = {}
+        fh.write("No properly formatted DOI provided\n")
+        return
     
     # add target:
     if 'DRYAD_URL' in os.environ:
@@ -108,6 +113,9 @@ def run_ezid(options):
     elif action == "update":
         print EZID_CLIENT.update(dc_doi, data)
     
+#     ['create', 'doi:10.5061/DRYAD.8157N', '_target', 'http://datadryad.org/resource/doi:10.5061/dryad.8157n', 'datacite', '@/Users/daisie/Desktop/test.xml']
+    process(args, fh)
+    os.remove(f.name)
     os.remove(crosswalk_file.name)
     os.remove(mets_file.name)
 
