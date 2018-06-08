@@ -44,7 +44,6 @@ def run_ezid(options):
     global EZID_CLIENT, DOI_SERVER, DOI_USER, DOI_PASSWORD
     # options should have doi, is_blackout, action, username, password
     doi = options['doi']
-    f = None
     
     if 'pipe' in options:
         fh = options['pipe']

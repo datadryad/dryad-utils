@@ -38,6 +38,8 @@ def update_ezid(item_id, f):
     doi = dict_from_query("select text_value from metadatavalue where item_id = %s and metadata_field_id = %s;" % (item_id, doi_field_id))['text_value']
     if doi is not None:
         options = dict(doi=doi, is_blackout='False', action='update', username=_username, password=_password)
+        if f is not None:
+            options['pipe'] = f
         doi_tool.run_ezid(options)
     sys.stdout.flush()
 
