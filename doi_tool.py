@@ -118,9 +118,6 @@ def run_ezid(options):
     elif action == "update":
         print EZID_CLIENT.update(dc_doi, data)
     
-#     ['create', 'doi:10.5061/DRYAD.8157N', '_target', 'http://datadryad.org/resource/doi:10.5061/dryad.8157n', 'datacite', '@/Users/daisie/Desktop/test.xml']
-    process(args, fh)
-    os.remove(f.name)
     os.remove(crosswalk_file.name)
     os.remove(mets_file.name)
 
