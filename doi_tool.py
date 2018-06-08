@@ -84,6 +84,10 @@ def run_ezid(options):
         fh.write("No properly formatted DOI provided\n")
         return
     
+    if action == "view":
+        print EZID_CLIENT.view(dc_doi)
+        sys.exit()
+        
     data = {}
     # add target:
     if 'DRYAD_URL' in os.environ:
