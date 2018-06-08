@@ -84,6 +84,7 @@ def run_ezid(options):
         fh.write("No properly formatted DOI provided\n")
         return
     
+    data = {}
     # add target:
     if 'DRYAD_URL' in os.environ:
         DRYAD_URL = os.environ['DRYAD_URL']
