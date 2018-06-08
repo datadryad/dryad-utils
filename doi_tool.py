@@ -85,7 +85,7 @@ def run_ezid(options):
         return
     
     if action == "view":
-        print EZID_CLIENT.view(dc_doi)
+        fh.write(EZID_CLIENT.view(dc_doi))
         sys.exit()
         
     data = {}
@@ -114,9 +114,9 @@ def run_ezid(options):
     data['datacite'] = metadata.decode('utf-8')
     
     if action == "create":
-        print EZID_CLIENT.create(dc_doi, data)
+        fh.write(EZID_CLIENT.create(dc_doi, data))
     elif action == "update":
-        print EZID_CLIENT.update(dc_doi, data)
+        fh.write(EZID_CLIENT.update(dc_doi, data))
     
     os.remove(crosswalk_file.name)
     os.remove(mets_file.name)
