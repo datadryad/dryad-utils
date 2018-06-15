@@ -15,14 +15,14 @@ if __name__ == '__main__':
     if is_user_id is not None:
         user_dict = dict_from_query("select * from eperson where eperson_id = %s;" % (user_spec))
     else:
-        user_dict = dict_from_query("select * from eperson where email = '%s';" % (user_spec))
+        user_dict = dict_from_query("select * from eperson where email = '%s';" % (user_spec.strip().lower()))
     if user_dict is not None:
         user_id = user_dict['eperson_id']
     else:
         print "Did not find a matching eperson"
         sys.exit()
     print "Current email address is: %s" % (user_dict['email'])
-    new_address = raw_input('Enter the new email address: ')
+    new_address = raw_input('Enter the new email address: ').lower().strip()
     execute_sql_query("update eperson set email = '%s' where eperson_id = %s;" % (new_address, user_id))
     items = rows_from_query('select item_id from item where submitter_id = %s;' % (user_id))
     for item in items[1:len(items)-1]:

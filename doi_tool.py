@@ -44,7 +44,6 @@ def run_ezid(options):
     global EZID_CLIENT, DOI_SERVER, DOI_USER, DOI_PASSWORD
     # options should have doi, is_blackout, action, username, password
     doi = options['doi']
-    f = None
     
     if 'pipe' in options:
         fh = options['pipe']
@@ -84,6 +83,11 @@ def run_ezid(options):
         fh.write("No properly formatted DOI provided\n")
         return
     
+    if action == "view":
+        fh.write(EZID_CLIENT.view(dc_doi))
+        sys.exit()
+        
+    data = {}
     # add target:
     if 'DRYAD_URL' in os.environ:
         DRYAD_URL = os.environ['DRYAD_URL']
@@ -109,13 +113,10 @@ def run_ezid(options):
     data['datacite'] = metadata.decode('utf-8')
     
     if action == "create":
-        print EZID_CLIENT.create(dc_doi, data)
+        fh.write(EZID_CLIENT.create(dc_doi, data))
     elif action == "update":
-        print EZID_CLIENT.update(dc_doi, data)
+        fh.write(EZID_CLIENT.update(dc_doi, data))
     
-#     ['create', 'doi:10.5061/DRYAD.8157N', '_target', 'http://datadryad.org/resource/doi:10.5061/dryad.8157n', 'datacite', '@/Users/daisie/Desktop/test.xml']
-    process(args, fh)
-    os.remove(f.name)
     os.remove(crosswalk_file.name)
     os.remove(mets_file.name)
 
