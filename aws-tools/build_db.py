@@ -11,7 +11,6 @@ import sys
 import json
 import time
 
-PGPASSWORD = os.environ['PGPASSWORD']
 FULL_DRYAD_DB_HOST = os.environ['DRYAD_DB_HOST']
 DRYAD_DB_HOST = FULL_DRYAD_DB_HOST.split('.')[0]
 HOST_SUFFIX = '.co33oyzjqasf.us-east-1.rds.amazonaws.com' # this is always the same for Dryad at us-east-1
@@ -39,6 +38,23 @@ def main():
         db_host = sys.argv[2]
     else:
         db_host = DRYAD_DB_HOST
+
+    # find password:
+    HOME = os.environ['HOME']
+    f = open( HOME+'/.pgpass', 'r' )
+    for line in f:
+        if re.match(db_host, line):
+            parts = re.split(':', line)
+            PGPASSWORD = parts[4]
+            break
+    f.close()
+    
+    if PGPASSWORD is None:
+        if 'PGPASSWORD' in os.environ:
+            PGPASSWORD = os.environ['PGPASSWORD']
+    if PGPASSWORD is None:
+        print "could not find a password in .pgpass or in $PGPASSWORD"
+        exit(0)
 
     if (db_status(db_host) == "n/a"):
         print 'create a new RDS'
