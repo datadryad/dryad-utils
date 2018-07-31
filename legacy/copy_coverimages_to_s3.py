@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-# Script to move coverimages from dryad-repo to the s3 bucket
+# Script to move coverimages from dryad-repo to the s3 bucket.
+# Pass in a file that contains a list of image file names (not paths) to copy over.
 
 __author__ = 'daisie'
 
@@ -9,8 +10,6 @@ import re
 import sys
 import json
 import hashlib
-
-## Make sure you've set the FTP_BUCKET environment variable.
 
 def main():
     if len(sys.argv) < 3:
