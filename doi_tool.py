@@ -70,6 +70,8 @@ def run_ezid(options):
         action = "create"
     elif (options['action'] == 'update'):
         action = "update"
+    elif (options['action'] == 'view'):
+        action = "view"
     else:
         fh.write("%s is not a valid action\n" % (options['action']))
         return
