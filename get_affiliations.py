@@ -14,7 +14,10 @@ from sql_utils import rows_from_query, get_field_id, var_from_query
 
 def main():
     pub_doi_field = get_field_id('dc.relation.isreferencedby')
-    if len(sys.argv) > 1:
+    if len(sys.argv) < 1:
+        print "Either use --list or a Dryad DOI as the argument"
+        return
+    if sys.argv[1] ne '--list'
         sql = "select mdv.text_value, item.item_id from metadatavalue as mdv, item where item.item_id = mdv.item_id and mdv.metadata_field_id = %s and item.owning_collection = 2 and mdv.text_value='%s'" % (pub_doi_field, sys.argv[1])
         pub_doi_list = rows_from_query(sql)
         if pub_doi_list is not None:
@@ -26,7 +29,6 @@ def main():
         pub_doi_list.pop(0)
         pub_doi_list.pop()
         for pub_doi_item in pub_doi_list:
-#            process_pub_doi(pub_doi_item)
             print pub_doi_item[0]
 
 def process_pub_doi(pub_doi_item):
