@@ -7,6 +7,6 @@ psql --host=$DRYAD_DB_HOST \
    --dbname=dryad_repo \
    -t \
    --no-align \
-   --field-separator ' ' \
+   --field-separator $'\t'\
    --quiet \
    -c "$1"
