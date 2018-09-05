@@ -6,7 +6,7 @@
 
 echo "grabbing latest from aws..."
 
-if [ "a$1" != "askipdb" ]
+if [ "$1" != "skipdb" ]
 then
    echo "Database..."
    /home/ubuntu/.local/bin/aws s3 cp s3://dryad-backup/databaseBackups/dryadDBlatest.sql $HOME/dryadDBlatest.sql 
