@@ -35,6 +35,8 @@ def main():
             exit
         sql = "select mdv.text_value, item.item_id from metadatavalue as mdv, item where item.item_id = mdv.item_id and mdv.metadata_field_id = %s and item.owning_collection = 2 and mdv.text_value='%s'" % (pub_doi_field, options.doi)
         pub_doi_list = rows_from_query(sql)
+        pub_doi_list.pop(0)
+        pub_doi_list.pop()
         if pub_doi_list is not None:
             for pub_doi_item in pub_doi_list:        
                 process_pub_doi(pub_doi_item, options.report)
