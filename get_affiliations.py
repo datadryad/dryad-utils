@@ -55,22 +55,21 @@ def process_pub_doi(pub_doi_item, report_type):
         try:
             r = requests.get('https://api.crossref.org/works/%s?mailto=admin@datadryad.org' % pub_doi)
             if r.status_code == 200:
-                print item_id
                 if report_type == 'affiliation':
                     authors = find_authors(r.json())
                     for author in authors:
                         author = author.replace('\n', ' ')
-                        print '%s\t%s\t%s\t%s\t%s' % (dryad_doi, title, pub_doi, pub_name, author.encode('utf-8'))
+                        print '%s\t%s\t%s\t%s\t%s\t%s' % (item_id, dryad_doi, title, pub_doi, pub_name, author.encode('utf-8'))
                 elif report_type == 'funder':
                     funders = find_funders(r.json())
                     for funder in funders:
                         funder = funder.replace('\n', ' ')
-                        print '%s\t%s\t%s\t%s\t\t\t\t%s' % (dryad_doi, title, pub_doi, pub_name, funder.encode('utf-8'))
+                        print '%s\t%s\t%s\t%s\t%s\t\t\t\t%s' % (item_id, dryad_doi, title, pub_doi, pub_name, funder.encode('utf-8'))
                 elif report_type == 'publisher':
                     publisher = find_publisher(r.json()).replace('\n', ' ')
-                    print '%s\t%s\t%s\t%s\t\t\t\t%s' % (dryad_doi, title, pub_doi, pub_name, publisher.encode('utf-8'))
+                    print '%s\t%s\t%s\t%s\t%s\t\t\t\t%s' % (item_id, dryad_doi, title, pub_doi, pub_name, publisher.encode('utf-8'))
             else:
-                print "no result for %s: %s" % (pub_doi, r.status_code)
+                print "%s\tno result for %s: %s" % (item_id, pub_doi, r.status_code)
         except:
             print "error occurred while executing " + pub_doi
     sys.stdout.flush()
