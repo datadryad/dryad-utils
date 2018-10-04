@@ -38,8 +38,7 @@ def main():
         pub_doi_list.pop(0)
         pub_doi_list.pop()
         if pub_doi_list is not None:
-            for pub_doi_item in pub_doi_list:        
-                process_pub_doi(pub_doi_item, options.report)
+            process_pub_doi(pub_doi_list[0], options.report)
 
 def process_pub_doi(pub_doi_item, report_type):
     dryad_doi_field = get_field_id('dc.identifier')
