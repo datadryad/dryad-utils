@@ -10,10 +10,10 @@ echo Sorting DASH stats...
 echo Putting stats into monthly files...
 while read line; do
     # for each line, find the year-month at the beginning of line
-    yearmo = `echo "$line" | egrep -o '[0-9]+-[0-9][0-9] | head -1'`
-    
-    echo "yearmo=|$yearmo|"
+    yearmo=`echo "$line" | egrep -o '[0-9]+-[0-9][0-9]' | head -1`
+
     # for each line, write it to the output file named by the year-month
+    echo "$line" >> "$yearmo"
 done <dashStats.log
 
 echo Sorting each monthly file...
