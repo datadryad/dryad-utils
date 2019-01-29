@@ -17,5 +17,6 @@ while read line; do
 done <dashStats.log
 
 echo Sorting each monthly file...
+find . -name '[0-9][0-9][0-9][0-9]-[0-9][0-9]' -exec sh -c 'sort {} > {}.sort' \;
 
 echo
