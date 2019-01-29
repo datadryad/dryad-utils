@@ -13,10 +13,10 @@ while read line; do
     yearmo=`echo "$line" | egrep -o '[0-9]+-[0-9][0-9]' | head -1`
 
     # for each line, write it to the output file named by the year-month
-    echo "$line" >> "$yearmo"
+    echo "$line" >> "counter_$yearmo"
 done <dashStats.log
 
 echo Sorting each monthly file...
-find . -name '[0-9][0-9][0-9][0-9]-[0-9][0-9]' -exec sh -c 'sort {} > {}.sort' \;
+find . -name 'counter_[0-9][0-9][0-9][0-9]-[0-9][0-9]' -exec sh -c 'sort {} > {}.log' \;
 
 echo
