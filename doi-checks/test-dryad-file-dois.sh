@@ -40,11 +40,11 @@
 
 while read doi ; do
     pkgdoi=`echo "$doi" | sed -e 's/\/[0-9][.0-9]*$//'`
-    resp=`curl -L -H "Accept: text/x-bibliography" -s -w "%{http_code}" -o /dev/null http://dx.doi.org/"$doi"`
+    resp=`curl -L -H "Accept: text/x-bibliography" -s -w "%{http_code}" -o /dev/null https://doi.org/"$doi"`
     if [ "$resp" -lt 400 ] ; then
         echo -e "$doi\tresolves"
     else 
-        resp=`curl -L -H "Accept: text/x-bibliography" -s -w "%{http_code}" -o /dev/null http://dx.doi.org/"$pkgdoi"`
+        resp=`curl -L -H "Accept: text/x-bibliography" -s -w "%{http_code}" -o /dev/null https://doi.org/"$pkgdoi"`
         if [ "$resp" -lt 400 ] ; then
             echo -e "$doi\tfails"
         else

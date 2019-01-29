@@ -8,7 +8,7 @@
 DOI_TOOL_LOCATION="/home/ubuntu/dryad-utils/doi_tool.py"
 
 while read doi ; do
-    resp=`curl -L -H "Accept: text/x-bibliography" -s -w "%{http_code}" -o /dev/null http://dx.doi.org/"$doi"`
+    resp=`curl -L -H "Accept: text/x-bibliography" -s -w "%{http_code}" -o /dev/null https://doi.org/"$doi"`
     if [ "$resp" -lt 400 ] ; then
         echo -e "$doi\tresolves, updating"
 	resp=`$DOI_TOOL_LOCATION --doi=$doi --action=update`

@@ -25,7 +25,7 @@ def render_itemsummary(journal_name, journal_url, cover_image):
                     <xsl:choose>\n\
                         <xsl:when test=\"contains($article-doi,'doi:')\">\n\
                             <xsl:value-of\n\
-                                    select=\"concat('http://dx.doi.org/', substring-after($article-doi, 'doi:'))\"/>\n\
+                                    select=\"concat('https://doi.org/', substring-after($article-doi, 'doi:'))\"/>\n\
                         </xsl:when>\n\
                         <xsl:otherwise>\n\
                             <xsl:value-of\n\

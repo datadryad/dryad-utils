@@ -34,10 +34,10 @@ def main():
     startdate = strptime(sys.argv[1], "%Y-%m-%d")
     enddate = strptime(sys.argv[2], "%Y-%m-%d")
     prov_field = get_field_id('dc.description.provenance')
-    items = rows_from_query ("select distinct nsf.item_id, substring(prov.text_value, 'Made available in DSpace on (\d+-\d+-\d+)T.+') from metadatavalue as nsf, metadatavalue as prov where nsf.authority='http://dx.doi.org/10.13039/100000001' and nsf.item_id=prov.item_id and prov.metadata_field_id=%s and prov.text_value like 'Made available in DSpace%%' order by substring" % prov_field)
+    items = rows_from_query ("select distinct nsf.item_id, substring(prov.text_value, 'Made available in DSpace on (\d+-\d+-\d+)T.+') from metadatavalue as nsf, metadatavalue as prov where nsf.authority='http://dx.doi.org/10.13039/100000001' or nsf.authority='https://doi.org/10.13039/100000001' and nsf.item_id=prov.item_id and prov.metadata_field_id=%s and prov.text_value like 'Made available in DSpace%%' order by substring" % prov_field)
     labels = dict(zip(items[0], range(0,len(items[0]))))
 
-    nsf_sponsor_id = var_from_query("select parent_id from conceptmetadatavalue where text_value = 'http://dx.doi.org/10.13039/100000001'",'parent_id')
+    nsf_sponsor_id = var_from_query("select parent_id from conceptmetadatavalue where text_value = 'http://dx.doi.org/10.13039/100000001' or text_value = 'https://doi.org/10.13039/100000001'",'parent_id')
    
     print "item\tarchive date\tdoi\tgrant provided\tis valid?\tNSF Sponsored?\ttitle\tauthors"
     for item in items[1:-1]:
