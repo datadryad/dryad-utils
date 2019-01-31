@@ -44,6 +44,7 @@ def process_pub_doi(pub_doi_item, report_type):
     dryad_doi_field = get_field_id('dc.identifier')
     title_field = get_field_id('dc.title')
     pub_name_field = get_field_id('prism.publicationName')
+    pub_date_field = get_field_id('dc.date.accessioned')
     m = re.search('^doi:(.+)', pub_doi_item[0])
     if m is not None:
         pub_doi = m.group(0)
@@ -51,6 +52,7 @@ def process_pub_doi(pub_doi_item, report_type):
         dryad_doi = var_from_query('select text_value from metadatavalue where item_id = %s and metadata_field_id = %s' % (item_id, dryad_doi_field), 'text_value')
         title = var_from_query('select text_value from metadatavalue where item_id = %s and metadata_field_id = %s' % (item_id, title_field), 'text_value')
         pub_name = var_from_query('select text_value from metadatavalue where item_id = %s and metadata_field_id = %s' % (item_id, pub_name_field), 'text_value')
+        pub_date = var_from_query('select text_value from metadatavalue where item_id = %s and metadata_field_id = %s' % (item_id, pub_date_field), 'text_value')
         try:
             r = requests.get('https://api.crossref.org/works/%s?mailto=admin@datadryad.org' % pub_doi)
             if r.status_code == 200:
@@ -58,15 +60,15 @@ def process_pub_doi(pub_doi_item, report_type):
                     authors = find_authors(r.json())
                     for author in authors:
                         author = author.replace('\n', ' ')
-                        print '%s\t%s\t%s\t%s\t%s\t%s' % (item_id, dryad_doi, title, pub_doi, pub_name, author.encode('utf-8'))
+                        print '%s\t%s\t%s\t%s\t%s\t%s\t%s' % (item_id, dryad_doi, title, pub_doi, pub_name, pub_date, author.encode('utf-8'))
                 elif report_type == 'funder':
                     funders = find_funders(r.json())
                     for funder in funders:
                         funder = funder.replace('\n', ' ')
-                        print '%s\t%s\t%s\t%s\t%s\t\t\t\t%s' % (item_id, dryad_doi, title, pub_doi, pub_name, funder.encode('utf-8'))
+                        print '%s\t%s\t%s\t%s\t%s\t%s\t\t\t\t%s' % (item_id, dryad_doi, title, pub_doi, pub_name, pub_date, funder.encode('utf-8'))
                 elif report_type == 'publisher':
                     publisher = find_publisher(r.json()).replace('\n', ' ')
-                    print '%s\t%s\t%s\t%s\t%s\t\t\t\t%s' % (item_id, dryad_doi, title, pub_doi, pub_name, publisher.encode('utf-8'))
+                    print '%s\t%s\t%s\t%s\t%s\t%s\t\t\t\t%s' % (item_id, dryad_doi, title, pub_doi, pub_name, pub_date, publisher.encode('utf-8'))
             else:
                 print "%s\tno result for %s: %s" % (item_id, pub_doi, r.status_code)
         except:
