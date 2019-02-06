@@ -19,4 +19,7 @@ done <dashStats.log
 echo Sorting each monthly file...
 find . -name 'counter_[0-9][0-9][0-9][0-9]-[0-9][0-9]' -exec sh -c 'sort {} > {}.log' \;
 
+echo "Removing \"junk\" file that contains the lines from the original log file which are not in the counter format"
+rm counter_
+
 echo
