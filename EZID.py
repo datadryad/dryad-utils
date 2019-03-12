@@ -27,10 +27,10 @@ import base64
 
 __all__=('EZIDClient', 'formatAnvlFromDict', 'formatAnvlFromList')
 
-if 'DOI_SERVER' in os.environ:
-    SERVER = os.environ['DOI_SERVER']
-else:
-    SERVER = 'https://ezid.cdlib.org'
+#if 'DOI_SERVER' in os.environ:
+#    SERVER = os.environ['DOI_SERVER']
+#else:
+SERVER = 'https://ez.datacite.org'
 
 operations = {
     # operation : number of arguments
