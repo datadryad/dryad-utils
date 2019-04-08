@@ -96,7 +96,7 @@ def generate_tasklistitem_prototype(workflow_item_id):
 def fix_taskowners(doi):
   item_id = 0
   if doi is None:
-    raise 'Must provide a DOI'
+    raise Exception('Must provide a DOI')
     return
   engine = get_engine()
   with engine.connect() as conn:
