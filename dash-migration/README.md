@@ -9,9 +9,9 @@ Tools to facilitate migrating large groups of items.
 - `dash-migration/dash_monitor.sh` -- monitor an item in DASH to determine whether it has been successfully processed by Merritt
 - `dash-migration/dash_monitor_many.sh` -- monitor a list of items to determine whether they have been successfully processed by Merritt
 
-To order by size
+To create a list of handles ordered by size, while respecting the version history:
 1. set the log4j-dspace-cli.properties to have `curate=ERROR`
-2. `dash_make_size_list.sh`
+2. `dash_make_list_size.sh`
 3. `sort -t"," -k3 -k2rn -k1  dashList.log >dashListSorted.log`
 4. `sed -e 's/,.*//' dashListSorted.log >dashListToTransfer.log`
 5. set the log4j-dspace-cli.properties to have `curate=DEBUG`
