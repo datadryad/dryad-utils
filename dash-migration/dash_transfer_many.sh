@@ -13,7 +13,7 @@ set -e
 while read item; do
     echo Transferring $item
     /opt/dryad/bin/dspace curate -v -t transfertodash -i $item -r - >>dashTransfer.log
-done <items.txt
+done </home/ubuntu/dryad-utils/dash-migration/items.txt
 
 echo
 
