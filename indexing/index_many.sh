@@ -8,7 +8,7 @@
 
 echo Processing items to reindex
 
-set -e
+#set -e
 
 while read item; do
     echo "#### Indexing $item ############################################"
