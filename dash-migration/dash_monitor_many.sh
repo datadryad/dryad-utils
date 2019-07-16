@@ -14,6 +14,7 @@ set -e
 while read item; do
     echo Monitoring $item
     /opt/dryad/bin/dspace curate -v -t dashmonitor -i $item -r - >>dashMonitor.log
+    sleep 10
 done <items.txt
 
 echo
