@@ -33,11 +33,14 @@ def get_bitstream_id():
 class bitstream_file(object):
     def __init__(self, s3key, bucket):
         self.s3key = s3key
+        print "- looking for %s in %s" % (s3key, bucket)
         cmd = 'aws s3api head-object --bucket %s --key "%s"' % (bucket, s3key)
         metadata = json.load(os.popen(cmd))
         self.size = metadata['ContentLength']
+        print "  - size is %s" % (self.size)
         self.name = os.path.basename(self.s3key)
         self.mimetype = metadata['ContentType']
+        print "  - type is %s" % (self.mimetype)
         if 'md5' in metadata['Metadata']:
             self.md5 = metadata['Metadata']['md5']
         else:
@@ -136,7 +139,7 @@ def main():
         print "Checking existence of dummy file %s..." % (get_object_key(bitstream_id))
         dummyfile = bitstream_file(get_object_key(bitstream_id), ASSETSTORE_BUCKET)
         print "...dummy file is %s bytes, checksum %s" % (dummyfile.size, dummyfile.md5)
-        print "Checking existence of large file %s..." % (largefile_key)
+        print "Checking existence of large file %s ..." % (largefile_key)
         largefile = bitstream_file(largefile_key, FTP_BUCKET)
         print "...large file is %s bytes, checksum %s" % (largefile.size, largefile.md5)
     except BaseException as e:
