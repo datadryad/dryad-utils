@@ -1,7 +1,7 @@
 #! /bin/bash
 
 # This script lives on the ftp server and is invoked via crontab.
-
+umask 000
 if [ ! -e /home/ubuntu/transfer_lock ];
 then
 	date
