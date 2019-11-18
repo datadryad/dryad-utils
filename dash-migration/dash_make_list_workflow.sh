@@ -5,7 +5,7 @@
 
 echo Creating list of items to transfer to DASH...
 
-psql -qt -U dryad_app -d dryad_repo -c "select handle from handle where resource_id in (select item_id from workflowitem where collection_id=2);" -o items.txt
+psql -qt -U dryad_app -d dryad_repo -c "select handle from handle where resource_id in (select item_id from workflowitem where collection_id=2 and item_id in (select item_id from item where last_modified > '2018-01-01'));" -o items.txt
 
 
 
